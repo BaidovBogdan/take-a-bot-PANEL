@@ -28,18 +28,18 @@ export default function Profile() {
 	return (
 		<div className="flex flex-col gap-4">
 			{loadingPage ? (
-				<Skeleton active paragraph={{ rows: 4 }} />
+				<Skeleton active className="p-4" paragraph={{ rows: 4 }} />
 			) : (
 				<div>
-					<div>
+					<div className="p-4">
 						<span className="font-bold text-xl text-[#012970]">Profile</span>{' '}
 						<br />{' '}
-						<span className="text-xs text-gray-700">
+						<span className="text-xs text-gray-700 p-4">
 							Home / Users / Profile
 						</span>
 					</div>
 					<div className="flex flex-col md:flex-row md:justify-start">
-						<div className="p-5 md:ml-32">
+						<div className="bg-white shadow-md rounded-lg p-4 md:ml-32">
 							<div className="flex flex-col items-center text-center">
 								<Image
 									src={'/profileTest.png'}
@@ -52,11 +52,11 @@ export default function Profile() {
 								<b>Free</b>
 							</div>
 						</div>
-						<div className="w-full">
+						<div className="w-full md:mr-96">
 							<Tabs
 								defaultActiveKey="1"
 								items={tabItems}
-								className="w-full"
+								className="w-full bg-white shadow-md rounded-lg p-4"
 								onChange={handleTabChange}
 							/>
 						</div>

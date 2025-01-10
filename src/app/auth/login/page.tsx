@@ -2,12 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Checkbox, Skeleton } from 'antd';
+import { useAtom } from 'jotai';
+import { burgerCheckAtom } from '../../atoms/atoms';
 import Image from 'next/image';
 
 const LoginForm = () => {
 	const [loading, setLoading] = useState(true);
+	const [isBurgerCheckAtom, setIsBurgerCheckAtom] = useAtom(burgerCheckAtom);
 
 	useEffect(() => {
+		setIsBurgerCheckAtom(isBurgerCheckAtom ? true : false);
 		setTimeout(() => {
 			setLoading(false);
 		}, 1000);
@@ -17,12 +21,11 @@ const LoginForm = () => {
 		return (
 			<div className="flex justify-center items-center min-h-screen bg-gray-100">
 				<div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 space-y-8">
-					<div className="text-center">
+					<div className="text-center flex flex-col gap-5">
 						<Skeleton.Input active className="w-64 mx-auto mb-4 h-10" />
 						<Skeleton.Input active className="w-64 mx-auto mb-4 h-10" />
 						<Skeleton.Input active className="w-64 mx-auto mb-4 h-10" />
 						<Skeleton.Input active className="w-64 mx-auto mb-4 h-10" />
-						<Skeleton.Button active className="w-full h-10 mx-auto mb-6" />
 						<Skeleton.Input active className="w-80 mx-auto mb-4 h-10" />
 						<Skeleton.Input active className="w-80 mx-auto mb-4 h-10" />
 					</div>

@@ -1,8 +1,8 @@
 'use client';
 
-import { Modal, Form, Input } from 'antd';
+import { Modal, Form, Input, Button } from 'antd';
 
-interface IModal {
+interface IEditAndAddressModal {
 	title: string;
 	firstLabel: string;
 	secondLabel: string;
@@ -14,7 +14,7 @@ interface IModal {
 	onClose: () => void;
 }
 
-interface INewStoreModalProps {
+interface INewAndJoinStoreModalProps {
 	open: boolean;
 	onClose: () => void;
 }
@@ -32,7 +32,13 @@ interface IManagersModalProps {
 	onClose: () => void;
 }
 
-export const ModalForAddressAndEdit = ({
+interface IJoinStoreModalProps {
+	open: boolean;
+	onOk: (values: { sellerId: string }) => void;
+	onCancel: () => void;
+}
+
+export const EditAndAddressModal = ({
 	title,
 	firstLabel,
 	secondLabel,
@@ -42,7 +48,7 @@ export const ModalForAddressAndEdit = ({
 	thirdValue,
 	open,
 	onClose,
-}: IModal) => {
+}: IEditAndAddressModal) => {
 	const [form] = Form.useForm();
 
 	form.setFieldsValue({
@@ -144,7 +150,10 @@ export const ManagersModal = ({
 	);
 };
 
-export const NewStoreModal = ({ open, onClose }: INewStoreModalProps) => {
+export const NewStoreModal = ({
+	open,
+	onClose,
+}: INewAndJoinStoreModalProps) => {
 	const [form] = Form.useForm();
 
 	const handleOk = () => {
@@ -192,6 +201,55 @@ export const NewStoreModal = ({ open, onClose }: INewStoreModalProps) => {
 				</Form.Item>
 				<Form.Item label="Store Postal Code" name="storePostalCode">
 					<Input placeholder="Enter postal code" />
+				</Form.Item>
+			</Form>
+		</Modal>
+	);
+};
+
+export const JoinStoreModal = ({
+	open,
+	onOk,
+	onCancel,
+}: IJoinStoreModalProps) => {
+	const [form] = Form.useForm();
+
+	const handleOk = () => {
+		form
+			.validateFields()
+			.then((values) => {
+				onOk(values);
+				form.resetFields();
+			})
+			.catch((info) => {
+				console.error('Validation failed:', info);
+			});
+	};
+
+	return (
+		<Modal
+			title="Join Store"
+			open={open}
+			onCancel={onCancel}
+			footer={[
+				<Button
+					key="submit"
+					type="primary"
+					onClick={handleOk}
+					className="bg-blue-500 text-white"
+				>
+					Join Store
+				</Button>,
+			]}
+		>
+			<p>Enter store information to join.</p>
+			<Form form={form} layout="vertical">
+				<Form.Item
+					label="Store Seller ID"
+					name="sellerId"
+					rules={[{ required: true, message: 'Please enter Store Seller ID' }]}
+				>
+					<Input placeholder="Enter Store Seller ID" />
 				</Form.Item>
 			</Form>
 		</Modal>

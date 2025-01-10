@@ -2,15 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-	--background: #ffffff;
-}
-
 body {
 	font-family: Arial, Helvetica, sans-serif;
 	user-select: none;
 	-webkit-user-drag: none;
+	background-color: #f6f9ff;
 }
+
 .ant-tabs-nav-wrap {
 	display: flex;
 	justify-content: center;

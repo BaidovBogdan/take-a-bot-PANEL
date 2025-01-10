@@ -32,7 +32,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ className, visible }) => {
 
 	return (
 		<div
-			className={`text-blue-700 h-screen flex-shrink-0 transition-transform duration-250 ${
+			className={`text-blue-700 h-screen rounded-md flex-shrink-0 ${
+				!loading ? 'bg-white shadow-md' : ''
+			} transition-all duration-500 ease-in-out ${
 				visible ? 'translate-x-0' : '-translate-x-full'
 			} ${className || ''}`}
 		>

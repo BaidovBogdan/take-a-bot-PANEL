@@ -9,6 +9,7 @@ import { useAtom } from 'jotai';
 import { burgerCheckAtom } from './atoms/atoms';
 import '@ant-design/v5-patch-for-react-19';
 import './globals.css';
+import { useEffect, useState } from 'react';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -26,6 +27,11 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const [burgerCheckA] = useAtom(burgerCheckAtom);
+	const [isHydrated, setIsHydrated] = useState(false);
+
+	useEffect(() => {
+		setIsHydrated(true);
+	}, []);
 	const pathname = usePathname();
 	const showSidebar =
 		pathname !== '/auth/login' &&
@@ -48,8 +54,8 @@ export default function RootLayout({
 				<div className="flex flex-1 overflow-hidden">
 					{showSidebar && <Sidebar visible={burgerCheckA} className="w-64" />}
 					<main
-						className={`flex-1 transition-all duration-250 ${
-							burgerCheckA ? 'ml-0' : 'ml-[-256px]'
+						className={`flex-1 transition-all duration-500 ease-in-out ${
+							isHydrated ? (burgerCheckA ? 'ml-0' : 'ml-[-256px]') : ''
 						}`}
 					>
 						{children}

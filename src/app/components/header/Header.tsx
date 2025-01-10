@@ -1,9 +1,15 @@
 import { AlignCenterOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { useAtom } from 'jotai';
+import {
+	UserOutlined,
+	SettingOutlined,
+	BookOutlined,
+	LogoutOutlined,
+} from '@ant-design/icons';
 import { burgerCheckAtom } from '../../atoms/atoms';
 import Image from 'next/image';
-import { Skeleton } from 'antd'; // Импортируем Skeleton
+import { Dropdown, Menu, Skeleton } from 'antd'; // Импортируем Skeleton
 import { useEffect, useState } from 'react';
 
 export const Header = () => {
@@ -35,9 +41,63 @@ export const Header = () => {
 		);
 	}
 
+	const ProfileDropdown = () => {
+		const menuItems = [
+			{
+				label: 'My Profile',
+				key: 'profile',
+				icon: <UserOutlined />,
+			},
+			{
+				label: 'Account Settings',
+				key: 'settings',
+				icon: <SettingOutlined />,
+			},
+			{
+				label: 'Manual',
+				key: 'manual',
+				icon: <BookOutlined />,
+			},
+			{
+				label: 'Logout',
+				key: 'logout',
+				icon: <LogoutOutlined />,
+				danger: true,
+			},
+		];
+
+		return (
+			<Dropdown
+				menu={{
+					items: menuItems,
+					onClick: ({ key }) => {
+						console.log(`Menu item clicked: ${key}`);
+					},
+				}}
+				trigger={['click']}
+				placement="bottomRight"
+				arrow
+			>
+				<div className="flex gap-1 cursor-pointer items-center">
+					<Image
+						src={'/profileTest.png'}
+						className="rounded-full"
+						alt="Avatar"
+						width={50}
+						height={50}
+						priority
+					/>
+					<span className="flex items-center">
+						test <span className="ml-1 text-sm">▼</span>
+					</span>
+				</div>
+			</Dropdown>
+		);
+	};
+
 	return (
 		<header
-			className="flex justify-between p-4"
+			className="flex justify-between p-4 bg-white shadow-md"
 			onContextMenu={(e) => e.preventDefault()}
 		>
 			<div className="flex gap-1 cursor-pointer">
@@ -56,16 +116,7 @@ export const Header = () => {
 				/>
 			</div>
 			<div className="flex gap-1 cursor-pointer">
-				<Image
-					src={'/profileTest.png'}
-					className="rounded-full"
-					alt="Avatar"
-					width={50}
-					layout="intrinsic"
-					priority
-					height={50}
-				/>
-				<span className="flex items-center">ИМЯ ▼</span>
+				<ProfileDropdown />
 			</div>
 		</header>
 	);

@@ -2,10 +2,11 @@ import { Button, Card } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import {
-	ModalForAddressAndEdit,
+	EditAndAddressModal,
 	DeleteStoreModal,
 	ManagersModal,
 	NewStoreModal,
+	JoinStoreModal,
 } from '../../../components/users/profile/Modal';
 
 const stores = [
@@ -34,9 +35,13 @@ const stores = [
 export const CardStores = () => {
 	const [isNewStoreModalOpen, setIsNewStoreModalOpen] =
 		useState<boolean>(false);
+	const [isJoinStoreModalOpen, setIsJoinStoreModalOpen] =
+		useState<boolean>(false);
+
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 	const [deleteStore, setDeleteStore] = useState<string | null>(null);
-	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+	const [isEditAndAddressModalOpen, setIsisEditAndAddressModalOpen] =
+		useState<boolean>(false);
 	const [isManagersModalOpen, setIsManagersModalOpen] =
 		useState<boolean>(false);
 	const [managersStoreName, setManagersStoreName] = useState<string | null>();
@@ -72,11 +77,11 @@ export const CardStores = () => {
 				thirdValue: store.apiKey,
 			});
 		}
-		setIsModalOpen((prev) => !prev);
+		setIsisEditAndAddressModalOpen((prev) => !prev);
 	};
 
 	const handleCloseModal = () => {
-		setIsModalOpen(false);
+		setIsisEditAndAddressModalOpen(false);
 		setModalProps({
 			title: '',
 			firstLabel: '',
@@ -109,7 +114,7 @@ export const CardStores = () => {
 	};
 
 	return (
-		<div className="space-y-1">
+		<div className="space-y-1 bg-white rounded-lg p-4">
 			{stores.map((store, index) => (
 				<div className="flex justify-center" key={index}>
 					<Card className="shadow-sm w-4/6">
@@ -164,14 +169,18 @@ export const CardStores = () => {
 				>
 					Create New Store
 				</Button>
-				<Button className="w-full md:w-auto">Join Existing Store</Button>
+				<Button
+					className="w-full md:w-auto"
+					onClick={() => setIsJoinStoreModalOpen((prev) => !prev)}
+				>
+					Join Existing Store
+				</Button>
 			</div>
 
-			{isModalOpen && (
-				<ModalForAddressAndEdit
+			{isEditAndAddressModalOpen && (
+				<EditAndAddressModal
 					{...modalProps}
-					//@ts-ignore
-					open={isModalOpen}
+					open={isEditAndAddressModalOpen}
 					onClose={handleCloseModal}
 				/>
 			)}
@@ -194,6 +203,15 @@ export const CardStores = () => {
 				<NewStoreModal
 					open={isNewStoreModalOpen}
 					onClose={() => setIsNewStoreModalOpen((prev) => !prev)}
+				/>
+			)}
+			{isJoinStoreModalOpen && (
+				<JoinStoreModal
+					open={isJoinStoreModalOpen}
+					onCancel={() => setIsJoinStoreModalOpen((prev) => !prev)}
+					onOk={(values) => {
+						console.log(values);
+					}}
 				/>
 			)}
 		</div>

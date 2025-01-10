@@ -1,3 +1,3 @@
 import { atom } from 'jotai';
 
-export const burgerCheckAtom = atom<boolean>(false);
+export const burgerCheckAtom = atom<boolean>(true);
