@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Checkbox, DatePicker, Button, Dropdown } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 const { RangePicker } = DatePicker;
@@ -26,7 +25,11 @@ export const FilterMenuMySales: React.FC<FilterMenuProps> = ({
 		dc: ['CPT', 'JHB'],
 	});
 
-	const handleCheckboxChange = (key: keyof Filters, value: any) => {
+	// Update the type of value to be more specific (boolean for single checkbox, string[] for Checkbox.Group)
+	const handleCheckboxChange = (
+		key: keyof Filters,
+		value: boolean | string[]
+	) => {
 		setFilters({ ...filters, [key]: value });
 	};
 
@@ -40,7 +43,6 @@ export const FilterMenuMySales: React.FC<FilterMenuProps> = ({
 		onApplyFilters(filters);
 	};
 
-	// Массив с элементами меню
 	const items = [
 		{
 			key: 'dc',

@@ -9,6 +9,12 @@ import {
 	JoinStoreModal,
 } from '../../../components/users/profile/Modal';
 
+interface Store {
+	name: string;
+	sellerId: string;
+	apiKey: string;
+}
+
 const stores = [
 	{
 		name: 'test',
@@ -55,7 +61,7 @@ export const CardStores = () => {
 		thirdValue: '',
 	});
 
-	const handleOpenModal = (store: any, type: 'address' | 'edit') => {
+	const handleOpenModal = (store: Store, type: 'address' | 'edit') => {
 		if (type === 'address') {
 			setModalProps({
 				title: `Edit Address of ${store.name}`,

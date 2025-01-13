@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { burgerCheckAtom } from '../../atoms/atoms';
 import Image from 'next/image';
-import { Dropdown, Menu, Skeleton } from 'antd'; // Импортируем Skeleton
+import { Dropdown, Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 
 export const Header = () => {

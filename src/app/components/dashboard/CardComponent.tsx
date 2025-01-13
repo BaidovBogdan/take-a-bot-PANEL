@@ -1,7 +1,19 @@
 import { Dropdown } from 'antd';
 import { menuItems } from './menuItems';
 
-export const CardComponent = ({ title, value, details, icon }: any) => {
+interface CardComponentProps {
+	title: string;
+	value: string;
+	details: string;
+	icon: React.ReactNode;
+}
+
+export const CardComponent = ({
+	title,
+	value,
+	details,
+	icon,
+}: CardComponentProps) => {
 	return (
 		<div className="bg-white shadow-md rounded-lg p-4 flex flex-col gap-4">
 			<div className="flex justify-between items-start">

@@ -110,10 +110,6 @@ export const DeleteStoreModal = ({
 	onCancel,
 	storeName,
 }: IDeleteStoreModalProps) => {
-	const handleOk = () => {};
-
-	const handleCancel = () => {};
-
 	return (
 		<Modal
 			title={`Delete Store ${storeName}?`}

@@ -11,16 +11,30 @@ import {
 	Skeleton,
 } from 'antd';
 import { CopyOutlined, DownOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { FilterMenuMySales } from '../components/mysales/MySalesFilterDropDown';
+
+interface SaleData {
+	id: string;
+	date: string;
+	title: string;
+	quantity: number;
+	status: string;
+	dc: string;
+	price: number;
+	fee: number;
+	cost: number;
+	profit: number;
+	customer: string;
+}
 
 export default function MySales() {
 	const [loading, setLoading] = useState(true);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [entriesPerPage, setEntriesPerPage] = useState(10);
-	const [searchText, setSearchText] = useState('');
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [entriesPerPage, setEntriesPerPage] = useState<number | 'all'>(10);
+	const [searchText, setSearchText] = useState<string>('');
 
-	const data = [
+	const data: SaleData[] = [
 		{
 			id: '0',
 			date: '02.01 20:08',
@@ -69,8 +83,8 @@ export default function MySales() {
 			.includes(searchText.toLowerCase())
 	);
 
-	const startIndex = (currentPage - 1) * entriesPerPage;
-	const endIndex = startIndex + entriesPerPage;
+	const startIndex = (currentPage - 1) * +entriesPerPage;
+	const endIndex = +startIndex + +entriesPerPage;
 	const paginatedData =
 		entriesPerPage === 'all'
 			? filteredData
@@ -81,34 +95,40 @@ export default function MySales() {
 			title: 'ID order',
 			dataIndex: 'id',
 			key: 'id',
-			sorter: (a, b) => a.id - b.id,
+			sorter: (a: { id: number }, b: { id: number }) => a.id - b.id,
 		},
 		{
 			title: 'Date',
 			dataIndex: 'date',
 			key: 'date',
-			sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+			sorter: (
+				a: { date: string | number | Date },
+				b: { date: string | number | Date }
+			) => new Date(a.date).getTime() - new Date(b.date).getTime(),
 		},
 		{
 			title: 'Title',
 			dataIndex: 'title',
 			key: 'title',
-			sorter: (a, b) => a.title.localeCompare(b.title),
+			sorter: (a: { title: string }, b: { title: string }) =>
+				a.title.localeCompare(b.title),
 		},
 		{
 			title: 'Quantity',
 			dataIndex: 'quantity',
 			key: 'quantity',
 			align: 'center',
-			sorter: (a, b) => a.quantity - b.quantity,
+			sorter: (a: { quantity: number }, b: { quantity: number }) =>
+				a.quantity - b.quantity,
 		},
 		{
 			title: 'Status',
 			dataIndex: 'status',
 			key: 'status',
-			sorter: (a, b) => a.status.localeCompare(b.status),
-			render: (status) => {
-				let color =
+			sorter: (a: { status: string }, b: { status: string }) =>
+				a.status.localeCompare(b.status),
+			render: (status: string) => {
+				const color =
 					status === 'Shipped'
 						? 'green'
 						: status === 'Returned'
@@ -121,19 +141,20 @@ export default function MySales() {
 			title: 'DC',
 			dataIndex: 'dc',
 			key: 'dc',
-			sorter: (a, b) => a.dc.localeCompare(b.dc),
+			sorter: (a: { dc: string }, b: { dc: string }) =>
+				a.dc.localeCompare(b.dc),
 		},
 		{
 			title: 'Price',
 			dataIndex: 'price',
 			key: 'price',
-			sorter: (a, b) => a.price - b.price,
+			sorter: (a: { price: number }, b: { price: number }) => a.price - b.price,
 		},
 		{
 			title: 'Fee',
 			dataIndex: 'fee',
 			key: 'fee',
-			sorter: (a, b) => a.fee - b.fee,
+			sorter: (a: { fee: number }, b: { fee: number }) => a.fee - b.fee,
 		},
 		{
 			title: 'Cost',
@@ -154,14 +175,16 @@ export default function MySales() {
 			title: 'Profit',
 			dataIndex: 'profit',
 			key: 'profit',
-			sorter: (a, b) => a.profit - b.profit,
+			sorter: (a: { profit: number }, b: { profit: number }) =>
+				a.profit - b.profit,
 		},
 		{
 			title: 'Invoice for Customer',
 			dataIndex: 'customer',
 			key: 'customer',
-			sorter: (a, b) => a.customer.localeCompare(b.customer),
-			render: (_, record) => {
+			sorter: (a: { customer: string }, b: { customer: string }) =>
+				a.customer.localeCompare(b.customer),
+			render: (_: unknown, record: SaleData) => {
 				const menuItems = [
 					{ label: <Input placeholder="Field 1" />, key: '1' },
 					{ label: <Input placeholder="Field 2" />, key: '2' },
@@ -197,13 +220,14 @@ export default function MySales() {
 		},
 	];
 
-	const handleSearchChange = (e) => {
+	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchText(e.target.value);
 	};
 
-	const handlePageChange = (page) => setCurrentPage(page);
-	const handleEntriesChange = (value: string | number) => {
-		setEntriesPerPage(value === 'all' ? 'all' : parseInt(value));
+	const handlePageChange = (page: SetStateAction<number>) =>
+		setCurrentPage(page);
+	const handleEntriesChange = (value: number | 'all') => {
+		setEntriesPerPage(value);
 		setCurrentPage(1);
 	};
 
@@ -218,7 +242,6 @@ export default function MySales() {
 				active
 				paragraph={{ rows: 10 }}
 				loading={loading}
-				avatar
 				title={{ width: 200 }}
 			>
 				<div className="p-4">
@@ -228,7 +251,7 @@ export default function MySales() {
 							<br />
 							<span className="text-xs text-gray-700 p-4">Home / My Sales</span>
 						</div>
-						<Button type="primary" className="bg-blue-500 w-full md:w-auto">
+						<Button type="primary" className="bg-blue-500 w-56 md:w-auto">
 							Update Sales
 						</Button>
 					</div>
@@ -236,22 +259,23 @@ export default function MySales() {
 				<div className="bg-white shadow-md rounded-lg">
 					<div className="p-4 flex justify-between">
 						<div className="text-gray-500 font-bold">Filters | All</div>
-						<FilterMenuMySales key={1} />
+						<FilterMenuMySales onApplyFilters={() => {}} />
 					</div>
 
-					<div className="flex justify-between items-center p-2 mb-4">
+					<div className="flex flex-col gap-4 md:flex-row md:justify-between md:gap-0 items-center p-2 mb-4">
 						<div>
 							<span className="font-bold text-gray-800 mr-2">
 								Entries per page:
 							</span>
 							<Select
+								//@ts-expect-error: Temporary workaround for Select value type mismatch
 								defaultValue="10"
 								style={{ width: 120 }}
 								onChange={handleEntriesChange}
 								options={[
-									{ value: '5', label: '5' },
-									{ value: '10', label: '10' },
-									{ value: '15', label: '15' },
+									{ value: 5, label: '5' },
+									{ value: 10, label: '10' },
+									{ value: 15, label: '15' },
 									{ value: 'all', label: 'All' },
 								]}
 							/>
@@ -268,7 +292,9 @@ export default function MySales() {
 					</div>
 
 					<Table
+						//@ts-expect-error: Column data type mismatch for pagination
 						columns={columns}
+						className="overflow-x-auto md:overflow-x-hidden"
 						dataSource={paginatedData}
 						pagination={false}
 						rowKey={(record) => record.id}

@@ -1,17 +1,25 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Checkbox, Skeleton } from 'antd';
+import { Form, Input, Button, Checkbox, Skeleton, message } from 'antd';
 import Image from 'next/image';
-import { burgerCheckAtom } from '@/app/atoms/atoms';
-import { useAtom } from 'jotai';
+import axios from 'axios';
+
+interface RegisterFormProps {
+	email: string;
+	password: string;
+	confirm: string;
+	username: string;
+	is_active: boolean;
+	is_superuser: boolean;
+	is_verified: boolean;
+}
 
 const RegisterForm = () => {
-	const [loading, setLoading] = useState(true);
-	const [isBurgerCheckAtom, setIsBurgerCheckAtom] = useAtom(burgerCheckAtom);
+	const [loading, setLoading] = useState<boolean>(true);
+	const [isRegsiter, setIsRegister] = useState<boolean>(false);
 
 	useEffect(() => {
-		setIsBurgerCheckAtom(isBurgerCheckAtom ? true : false);
 		setTimeout(() => {
 			setLoading(false);
 		}, 1000);
@@ -36,6 +44,44 @@ const RegisterForm = () => {
 		);
 	}
 
+	const handleRegister = async (values: RegisterFormProps) => {
+		setIsRegister(true);
+		try {
+			const response = await axios.post(
+				'http://13.246.12.216/auth/register',
+				{
+					email: values.email,
+					password: values.password,
+					confirm_password: values.confirm,
+					username: values.username,
+					is_active: true,
+					is_superuser: false,
+					is_verified: false,
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				}
+			);
+			message.success('Registration successful!');
+			console.log('Response:', response.data);
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+				console.error('Error:', error.response?.data || error.message);
+				message.error(
+					error.response?.data?.detail[0]?.msg ||
+						error.response?.data?.detail?.reason
+				);
+			} else {
+				console.error('Unexpected error:', error);
+				message.error('An unexpected error occurred!');
+			}
+		} finally {
+			setIsRegister(false);
+		}
+	};
+
 	return (
 		<div className="flex justify-center items-center min-h-screen bg-gray-100">
 			<div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
@@ -58,6 +104,7 @@ const RegisterForm = () => {
 				</div>
 				<Form
 					name="register"
+					onFinish={handleRegister}
 					initialValues={{ remember: true }}
 					className="space-y-4"
 				>
@@ -132,6 +179,7 @@ const RegisterForm = () => {
 							type="primary"
 							htmlType="submit"
 							className="w-full h-10 bg-blue-500 hover:bg-blue-600"
+							loading={isRegsiter}
 						>
 							Register
 						</Button>

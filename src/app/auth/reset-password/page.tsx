@@ -4,16 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Skeleton } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { burgerCheckAtom } from '../../atoms/atoms';
-import { useAtom } from 'jotai';
 
 const ResetPassword = () => {
 	const [loading, setLoading] = useState(true);
-	const [isBurgerCheckAtom, setIsBurgerCheckAtom] = useAtom(burgerCheckAtom);
 	const router = useRouter();
 
 	useEffect(() => {
-		setIsBurgerCheckAtom(isBurgerCheckAtom ? true : false);
 		setTimeout(() => {
 			setLoading(false);
 		}, 1000);

@@ -1,7 +1,7 @@
 import { Button, Form, Input } from 'antd';
 
 export const ChangePassword = () => {
-	function onFinish(values: any): void {
+	function onFinish() {
 		throw new Error('Function not implemented.');
 	}
 

@@ -3,12 +3,27 @@
 import { Table, Tag, Pagination, Select } from 'antd';
 import { useState } from 'react';
 
-export const RecentSales = ({ data }: any) => {
-	const [currentPage, setCurrentPage] = useState(1);
-	const [entriesPerPage, setEntriesPerPage] = useState(10);
+interface SaleRecord {
+	id: string | number;
+	date: string | Date;
+	product: string;
+	quantity: number;
+	status: string;
+	dc: string;
+	price: number;
+	profit: number;
+}
 
-	const startIndex = (currentPage - 1) * entriesPerPage;
-	const endIndex = startIndex + entriesPerPage;
+interface RecentSalesProps {
+	data: SaleRecord[];
+}
+
+export const RecentSales = ({ data }: RecentSalesProps) => {
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [entriesPerPage, setEntriesPerPage] = useState<string | number>(10);
+
+	const startIndex = (currentPage - 1) * Number(entriesPerPage);
+	const endIndex = startIndex + Number(entriesPerPage);
 	const paginatedData =
 		entriesPerPage === 'all' ? data : data.slice(startIndex, endIndex);
 
@@ -17,28 +32,31 @@ export const RecentSales = ({ data }: any) => {
 			title: 'Date',
 			dataIndex: 'date',
 			key: 'date',
-			sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+			sorter: (a: SaleRecord, b: SaleRecord) =>
+				new Date(a.date).getTime() - new Date(b.date).getTime(),
 		},
 		{
 			title: 'Product',
 			dataIndex: 'product',
 			key: 'product',
-			sorter: (a, b) => a.product.localeCompare(b.product),
+			sorter: (a: SaleRecord, b: SaleRecord) =>
+				a.product.localeCompare(b.product),
 		},
 		{
 			title: 'Qty',
 			dataIndex: 'quantity',
 			key: 'quantity',
 			align: 'center',
-			sorter: (a, b) => a.quantity - b.quantity,
+			sorter: (a: SaleRecord, b: SaleRecord) => a.quantity - b.quantity,
 		},
 		{
 			title: 'Status',
 			dataIndex: 'status',
 			key: 'status',
-			sorter: (a, b) => a.status.localeCompare(b.status),
-			render: (status) => {
-				let color =
+			sorter: (a: SaleRecord, b: SaleRecord) =>
+				a.status.localeCompare(b.status),
+			render: (status: string) => {
+				const color =
 					status === 'Shipped'
 						? 'green'
 						: status === 'Returned'
@@ -51,25 +69,25 @@ export const RecentSales = ({ data }: any) => {
 			title: 'DC',
 			dataIndex: 'dc',
 			key: 'dc',
-			sorter: (a, b) => a.dc.localeCompare(b.dc),
+			sorter: (a: SaleRecord, b: SaleRecord) => a.dc.localeCompare(b.dc),
 		},
 		{
 			title: 'Price',
 			dataIndex: 'price',
 			key: 'price',
-			sorter: (a, b) => a.price - b.price,
+			sorter: (a: SaleRecord, b: SaleRecord) => a.price - b.price,
 		},
 		{
 			title: 'Profit',
 			dataIndex: 'profit',
 			key: 'profit',
-			sorter: (a, b) => a.profit - b.profit,
+			sorter: (a: SaleRecord, b: SaleRecord) => a.profit - b.profit,
 		},
 	];
 
-	const handlePageChange = (page) => setCurrentPage(page);
-	const handleEntriesChange = (value) => {
-		setEntriesPerPage(value === 'all' ? 'all' : parseInt(value));
+	const handlePageChange = (page: number) => setCurrentPage(page);
+	const handleEntriesChange = (value: string | number) => {
+		setEntriesPerPage(value === 'all' ? 'all' : Number(value));
 		setCurrentPage(1);
 	};
 
@@ -99,10 +117,12 @@ export const RecentSales = ({ data }: any) => {
 			</div>
 
 			<Table
+				className="overflow-x-auto md:overflow-x-hidden"
+				//@ts-expect-error Ignore TypeScript error due to type mismatch between columns and Table component
 				columns={columns}
 				dataSource={paginatedData}
 				pagination={false}
-				rowKey={(record) => record.id}
+				rowKey={(record) => record.id.toString()}
 			/>
 
 			{entriesPerPage !== 'all' && (
@@ -110,7 +130,7 @@ export const RecentSales = ({ data }: any) => {
 					<Pagination
 						current={currentPage}
 						total={data.length}
-						pageSize={entriesPerPage}
+						pageSize={Number(entriesPerPage)}
 						onChange={handlePageChange}
 					/>
 				</div>

@@ -2,16 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Checkbox, Skeleton } from 'antd';
-import { useAtom } from 'jotai';
-import { burgerCheckAtom } from '../../atoms/atoms';
 import Image from 'next/image';
 
 const LoginForm = () => {
 	const [loading, setLoading] = useState(true);
-	const [isBurgerCheckAtom, setIsBurgerCheckAtom] = useAtom(burgerCheckAtom);
 
 	useEffect(() => {
-		setIsBurgerCheckAtom(isBurgerCheckAtom ? true : false);
 		setTimeout(() => {
 			setLoading(false);
 		}, 1000);
@@ -51,7 +47,7 @@ const LoginForm = () => {
 						Login to Your Account
 					</h2>
 					<p className="text-gray-500">
-						Enter your username & password to login
+						Enter your username &amp; password to login
 					</p>
 				</div>
 				<Form
@@ -98,7 +94,7 @@ const LoginForm = () => {
 
 				<div className="text-center text-sm text-gray-500 mt-4">
 					<p className="text-left">
-						Don't have an account?{' '}
+						Don&apos;t have an account?{' '}
 						<a href="/auth/register" className="text-blue-500 hover:underline">
 							Create an account
 						</a>

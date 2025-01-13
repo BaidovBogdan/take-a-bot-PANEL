@@ -1,13 +1,14 @@
-import { Button, Form, Input, Avatar, Upload } from 'antd';
+import { Button, Form, Input, Avatar, Upload, UploadProps } from 'antd';
 import { useState } from 'react';
+import type { UploadRequestOption } from 'rc-upload/lib/interface';
 
-export const ProfileForm = () => {
+export const ProfileForm: React.FC = () => {
 	const [imageUrl, setImageUrl] = useState<string>(
-		'https://cdn-icons-png.flaticon.com/512/847/847969.png' // Стандартное изображение
+		'https://cdn-icons-png.flaticon.com/512/847/847969.png'
 	);
 
-	const uploadProps = {
-		beforeUpload: (file: File) => {
+	const uploadProps: UploadProps = {
+		beforeUpload: (file) => {
 			const isImage =
 				file.type === 'image/jpeg' ||
 				file.type === 'image/png' ||
@@ -18,11 +19,21 @@ export const ProfileForm = () => {
 			return isImage || Upload.LIST_IGNORE;
 		},
 		showUploadList: false,
-		customRequest: ({ file, onSuccess }: any) => {
-			// Эмуляция загрузки
+		customRequest: (options: UploadRequestOption) => {
+			const { file, onSuccess } = options;
+
+			// Ensure `file` is of type `RcFile`
+			if (!(file instanceof File)) {
+				console.error('Uploaded file is not of the expected type.');
+				return;
+			}
+
+			// Simulate upload
 			setTimeout(() => {
-				setImageUrl(URL.createObjectURL(file)); // Установка URL для аватара
-				onSuccess('ok');
+				setImageUrl(URL.createObjectURL(file));
+				if (onSuccess) {
+					onSuccess('ok'); // Notify Ant Design that the upload succeeded
+				}
 			}, 1000);
 		},
 	};

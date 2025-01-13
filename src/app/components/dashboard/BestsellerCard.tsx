@@ -1,12 +1,19 @@
 import Image from 'next/image';
 
+interface BestsellerCardProps {
+	image: string;
+	title: string;
+	price: number;
+	totalPrice: number;
+	quantity: number;
+}
 export const BestsellerCard = ({
 	image,
 	title,
 	price,
 	totalPrice,
 	quantity,
-}: any) => {
+}: BestsellerCardProps) => {
 	return (
 		<div className="flex items-center gap-4 bg-white shadow-md rounded-lg p-6">
 			<Image

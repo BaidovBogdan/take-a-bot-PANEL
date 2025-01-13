@@ -17,8 +17,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ className, visible }) => {
 
 	const menuItems = [
 		{ label: 'Dashboard', key: '/dashboard', icon: <DashboardOutlined /> },
-		{ label: 'My Sales', key: '/my-sales', icon: <ShoppingOutlined /> },
-		{ label: 'My Offers', key: '/my-offers', icon: <GiftOutlined /> },
+		{ label: 'My Sales', key: '/mysales', icon: <ShoppingOutlined /> },
+		{ label: 'My Offers', key: '/myoffers', icon: <GiftOutlined /> },
 		{ label: 'Profile', key: '/users/profile', icon: <UserOutlined /> },
 	];
 

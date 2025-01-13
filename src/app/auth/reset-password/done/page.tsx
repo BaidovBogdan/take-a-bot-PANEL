@@ -3,15 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { Skeleton } from 'antd';
 import Image from 'next/image';
-import { burgerCheckAtom } from '../../../atoms/atoms';
-import { useAtom } from 'jotai';
 
 const ResetPasswordDone = () => {
 	const [loading, setLoading] = useState(true);
-	const [isBurgerCheckAtom, setIsBurgerCheckAtom] = useAtom(burgerCheckAtom);
 
 	useEffect(() => {
-		setIsBurgerCheckAtom(isBurgerCheckAtom ? true : false);
 		setTimeout(() => {
 			setLoading(false);
 		}, 1000);

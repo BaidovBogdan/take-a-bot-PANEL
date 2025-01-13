@@ -8,7 +8,7 @@ import { Button, Dropdown, Tooltip, Skeleton } from 'antd';
 import { useState, useEffect } from 'react';
 import { menuItems } from '../components/dashboard/menuItems';
 
-const Dashboard = () => {
+export default function Dashboard() {
 	const [loading, setLoading] = useState(true);
 
 	const cardData = [
@@ -171,7 +171,7 @@ const Dashboard = () => {
 
 	const [, setSelectedFilter] = useState('');
 
-	const handleMenuClick = (e: any) => {
+	const handleMenuClick = (e: { key: string }) => {
 		setSelectedFilter(e.key);
 	};
 
@@ -182,7 +182,7 @@ const Dashboard = () => {
 
 	return (
 		<div className="min-h-screen p-4 space-y-6">
-			<div className="p-4 flex justify-between">
+			<div className="p-4 flex items-center flex-col md:flex-row md:justify-between gap-4">
 				<div>
 					<Skeleton
 						active
@@ -195,89 +195,88 @@ const Dashboard = () => {
 						<span className="text-xs text-gray-700 p-4">Home / Dashboard</span>
 					</Skeleton>
 				</div>
-				<div className="flex gap-5 items-center">
+				<div className="flex flex-col md:flex-row gap-3 md:gap-5 items-center">
 					<Skeleton active loading={loading} className="w-full md:w-auto">
 						<Dropdown
-							menu={{ items: menuItems }}
+							menu={{ items: menuItems, onClick: handleMenuClick }} // Привязываем обработчик
 							trigger={['click']}
 							placement="bottomLeft"
 						>
-							<Button type="primary" className="bg-blue-500 w-full md:w-auto">
+							<Button type="primary" className="bg-blue-500 w-56 md:w-auto">
 								Global Filters
 							</Button>
 						</Dropdown>
 					</Skeleton>
 					<Skeleton active loading={loading} className="w-full md:w-auto">
 						<Tooltip placement="bottom" title="Click for update data">
-							<Button type="primary" className="bg-blue-500 w-full md:w-auto">
+							<Button type="primary" className="bg-blue-500 w-56 md:w-auto">
 								Update Sales
 							</Button>
 						</Tooltip>
 					</Skeleton>
 				</div>
 			</div>
-			<div className="flex gap-5">
-				<div className="flex flex-col gap-4 w-1/3">
-					<Skeleton active loading={loading}>
-						{cardData.map((card, index) => (
-							<CardComponent
-								key={index}
-								title={card.title}
-								value={card.value}
-								details={card.details}
-								icon={card.icon}
-							/>
-						))}
-					</Skeleton>
-					<div className="md:col-span-1 space-y-4">
-						<Skeleton
-							active
-							loading={loading}
-							paragraph={{ rows: 3, width: '100%' }}
-						>
-							<div className="bg-white shadow-md rounded-lg p-4">
-								<div className="flex justify-between">
-									<p className="text-gray-500 font-bold">Bestsellers | All</p>
-									<Dropdown
-										menu={{ items: menuItems }}
-										placement="bottomRight"
-										trigger={['click']}
-										arrow
-									>
-										<button className="text-[#7D879C] text-lg hover:text-gray-800">
-											•••
-										</button>
-									</Dropdown>
-								</div>
-								{bestsellerData.map((item, index) => (
-									<div className="mt-4">
-										<BestsellerCard
-											key={index}
-											image={item.image}
-											title={item.title}
-											price={item.price}
-											totalPrice={item.totalPrice}
-											quantity={item.quantity}
-										/>
-									</div>
-								))}
-							</div>
-						</Skeleton>
-					</div>
-				</div>
-				<div className="flex flex-col gap-4 w-2/3">
-					<Skeleton active loading={loading}>
-						<ChartComponent />
-					</Skeleton>
-					<div className="md:col-span-2">
+			<div className="flex flex-col gap-5">
+				<div className="flex flex-col md:flex-row gap-5">
+					<div className="flex flex-col gap-4 w-full md:w-1/3">
 						<Skeleton active loading={loading}>
-							<RecentSales data={salesData} />
+							{cardData.map((card, index) => (
+								<CardComponent
+									key={index}
+									title={card.title}
+									value={card.value}
+									details={card.details}
+									icon={card.icon}
+								/>
+							))}
 						</Skeleton>
+						<div className="space-y-4">
+							<Skeleton
+								active
+								loading={loading}
+								paragraph={{ rows: 3, width: '100%' }}
+							>
+								<div className="bg-white shadow-md rounded-lg p-4">
+									<div className="flex justify-between">
+										<p className="text-gray-500 font-bold">Bestsellers | All</p>
+										<Dropdown
+											menu={{ items: menuItems }}
+											placement="bottomRight"
+											trigger={['click']}
+											arrow
+										>
+											<button className="text-[#7D879C] text-lg hover:text-gray-800">
+												•••
+											</button>
+										</Dropdown>
+									</div>
+									{bestsellerData.map((item, index) => (
+										<div className="mt-4" key={index}>
+											<BestsellerCard
+												image={item.image}
+												title={item.title}
+												price={item.price}
+												totalPrice={item.totalPrice}
+												quantity={item.quantity}
+											/>
+										</div>
+									))}
+								</div>
+							</Skeleton>
+						</div>
+					</div>
+					<div className="flex flex-col gap-4 w-full md:w-2/3">
+						<Skeleton active loading={loading}>
+							<ChartComponent />
+						</Skeleton>
+						<div>
+							<Skeleton active loading={loading}>
+								<RecentSales data={salesData} />
+							</Skeleton>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	);
-};
-
-export default Dashboard;
+}
