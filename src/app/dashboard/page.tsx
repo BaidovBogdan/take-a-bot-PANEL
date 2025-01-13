@@ -5,6 +5,12 @@ import { ChartComponent } from '../components/dashboard/Chart';
 import { BestsellerCard } from '../components/dashboard/BestsellerCard';
 import { RecentSales } from '../components/dashboard/RecentSales';
 import { Button, Dropdown, Tooltip, Skeleton } from 'antd';
+import {
+	DollarTwoTone,
+	ProjectTwoTone,
+	ShoppingTwoTone,
+	StopTwoTone,
+} from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { menuItems } from '../components/dashboard/menuItems';
 
@@ -15,26 +21,27 @@ export default function Dashboard() {
 		{
 			title: 'Sales | Today',
 			value: 'R None',
-			details: 'None items for 0 sales',
-			icon: '💵',
+			details: 'None items for 0 sales Sale price avg. ~ None',
+			icon: <DollarTwoTone />,
 		},
 		{
 			title: 'Returned | All',
 			value: 'R 105.00',
-			details: '1 item in 1 returns',
-			icon: '🔄',
+			details: '1 items in 1 returns R 34.50 ~ Lost fee',
+			icon: <ShoppingTwoTone />,
 		},
 		{
 			title: 'Cancellations | All',
 			value: 'R None',
-			details: 'None items in 0 cancelled',
-			icon: '🚫',
+			details: 'None items in 0 canceled R None ~ Lost fee',
+			icon: <StopTwoTone />,
 		},
 		{
 			title: 'Profit | All',
 			value: 'R -34.50',
-			details: 'Total fee: 210.30',
-			icon: '📉',
+			details:
+				'Total fee: 2101.30 R ~ 101.67 % Product cost: 0 R ~ 0.00 % Margin: ~ -1.67 %',
+			icon: <ProjectTwoTone />,
 		},
 	];
 

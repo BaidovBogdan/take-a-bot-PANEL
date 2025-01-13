@@ -16,6 +16,8 @@ export default function MyOffers() {
 		throw new Error('Function not implemented.');
 	}
 
+	const { Option } = Select;
+
 	return (
 		<Skeleton
 			active
@@ -66,7 +68,16 @@ export default function MyOffers() {
 						</div>
 					</div>
 					<div className="flex justify-center">
-						<Input placeholder="Search" className="w-64" />
+						<Input
+							placeholder="Search"
+							className="w-64"
+							addonBefore={
+								<Select defaultValue="TSIN" style={{ width: 75 }}>
+									<Option value="TSIN">TSIN</Option>
+									<Option value="Title">Title</Option>
+								</Select>
+							}
+						/>
 					</div>
 					<div className="flex gap-5 justify-center bg-white shadow-md rounded-lg p-4">
 						<div className="flex flex-col gap-10 md:gap-4 w-auto p-4 md:p-4">

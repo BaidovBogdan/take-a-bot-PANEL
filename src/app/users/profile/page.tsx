@@ -1,7 +1,6 @@
 'use client';
 
 import { Skeleton, Tabs } from 'antd';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { createTabItems } from '../../components/users/profile/Tab';
 
@@ -39,19 +38,6 @@ export default function Profile() {
 						</span>
 					</div>
 					<div className="flex flex-col md:flex-row md:justify-start">
-						<div className="bg-white shadow-md rounded-lg p-4 md:ml-32">
-							<div className="flex flex-col items-center text-center">
-								<Image
-									src={'/profileTest.png'}
-									alt="avatar"
-									width={120}
-									height={120}
-								/>
-								<span>name</span>
-								<span>mail</span>
-								<b>Free</b>
-							</div>
-						</div>
 						<div className="w-full md:mr-96">
 							<Tabs
 								defaultActiveKey="1"

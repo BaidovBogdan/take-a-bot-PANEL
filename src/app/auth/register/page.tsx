@@ -62,6 +62,7 @@ const RegisterForm = () => {
 					headers: {
 						'Content-Type': 'application/json',
 					},
+					withCredentials: true,
 				}
 			);
 			message.success('Registration successful!');
