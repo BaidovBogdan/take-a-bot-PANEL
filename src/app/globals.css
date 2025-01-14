@@ -3,14 +3,34 @@
 @tailwind utilities;
 
 body {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: 'Nunito', sans-serif;
 	user-select: none;
 	-webkit-user-drag: none;
 	background-color: #f6f9ff;
+	overflow-x: hidden;
 }
 
-body {
-	overflow-x: hidden;
+.ant-btn,
+.ant-menu,
+.ant-menu-item,
+.ant-tabs-nav,
+.ant-tabs-tab-btn {
+	font-family: 'Nunito', sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+label,
+input,
+textarea,
+button {
+	font-family: 'Nunito', sans-serif;
 }
 
 html,
@@ -47,4 +67,14 @@ body {
 		align-items: center;
 		justify-content: center;
 	}
+}
+
+.custom-btn {
+	background-color: #00215c !important; /* Ваш основной цвет */
+	border: none !important; /* Убирает стиль от Ant Design */
+}
+
+.custom-btn:hover {
+	background-color: #002f81d3 !important; /* Цвет при hover */
+	transition: background-color 0.3s !important; /* Добавляем плавность */
 }

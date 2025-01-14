@@ -7,9 +7,11 @@ import { RecentSales } from '../components/dashboard/RecentSales';
 import { Button, Dropdown, Tooltip, Skeleton } from 'antd';
 import {
 	DollarTwoTone,
+	FunnelPlotOutlined,
 	ProjectTwoTone,
 	ShoppingTwoTone,
 	StopTwoTone,
+	UndoOutlined,
 } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { menuItems } from '../components/dashboard/menuItems';
@@ -17,30 +19,44 @@ import { menuItems } from '../components/dashboard/menuItems';
 export default function Dashboard() {
 	const [loading, setLoading] = useState(true);
 
+	function highlightDetails(details: string) {
+		return details.replace(
+			/\b(None|\d+(\.\d+)?|-\d+(\.\d+)?( %| R)?)\b/g,
+			'<span class="text-green-600 font-bold text-base">$&</span>'
+		);
+	}
+
 	const cardData = [
 		{
-			title: 'Sales | Today',
+			title: 'Sales ',
+			subTitle: '| All',
 			value: 'R None',
-			details: 'None items for 0 sales Sale price avg. ~ None',
+			details: highlightDetails(
+				'None items for 0 sales Sale price avg. ~ None'
+			),
 			icon: <DollarTwoTone />,
 		},
 		{
-			title: 'Returned | All',
+			title: 'Returned ',
+			subTitle: '| All',
 			value: 'R 105.00',
-			details: '1 items in 1 returns R 34.50 ~ Lost fee',
+			details: highlightDetails('1 items in 1 returns R 34.50 ~ Lost fee'),
 			icon: <ShoppingTwoTone />,
 		},
 		{
-			title: 'Cancellations | All',
+			title: 'Cancellations ',
+			subTitle: '| All',
 			value: 'R None',
-			details: 'None items in 0 canceled R None ~ Lost fee',
+			details: highlightDetails('None items in 0 canceled R None ~ Lost fee'),
 			icon: <StopTwoTone />,
 		},
 		{
-			title: 'Profit | All',
+			title: 'Profit ',
+			subTitle: '| All',
 			value: 'R -34.50',
-			details:
-				'Total fee: 2101.30 R ~ 101.67 % Product cost: 0 R ~ 0.00 % Margin: ~ -1.67 %',
+			details: highlightDetails(
+				'Total fee: 2101.30 R ~ 101.67 % Product cost: 0 R ~ 0.00 % Margin: ~ -1.67 %'
+			),
 			icon: <ProjectTwoTone />,
 		},
 	];
@@ -205,18 +221,29 @@ export default function Dashboard() {
 				<div className="flex flex-col md:flex-row gap-3 md:gap-5 items-center">
 					<Skeleton active loading={loading} className="w-full md:w-auto">
 						<Dropdown
-							menu={{ items: menuItems, onClick: handleMenuClick }} // Привязываем обработчик
+							menu={{ items: menuItems, onClick: handleMenuClick }}
 							trigger={['click']}
 							placement="bottomLeft"
 						>
-							<Button type="primary" className="bg-blue-500 w-56 md:w-auto">
+							<Button
+								type="primary"
+								className="custom-btn bg-[#00215C] h-10 w-64 md:w-auto transition-colors duration-300"
+								icon={<FunnelPlotOutlined />}
+								iconPosition="start"
+							>
 								Global Filters
 							</Button>
 						</Dropdown>
 					</Skeleton>
+
 					<Skeleton active loading={loading} className="w-full md:w-auto">
 						<Tooltip placement="bottom" title="Click for update data">
-							<Button type="primary" className="bg-blue-500 w-56 md:w-auto">
+							<Button
+								type="primary"
+								className="custom-btn bg-[#00215C] h-10 w-64 md:w-auto transition-colors duration-300"
+								icon={<UndoOutlined />}
+								iconPosition="start"
+							>
 								Update Sales
 							</Button>
 						</Tooltip>
@@ -230,6 +257,7 @@ export default function Dashboard() {
 							{cardData.map((card, index) => (
 								<CardComponent
 									key={index}
+									subTitle={card.subTitle}
 									title={card.title}
 									value={card.value}
 									details={card.details}
@@ -244,18 +272,13 @@ export default function Dashboard() {
 								paragraph={{ rows: 3, width: '100%' }}
 							>
 								<div className="bg-white shadow-md rounded-lg p-4">
-									<div className="flex justify-between">
-										<p className="text-gray-500 font-bold">Bestsellers | All</p>
-										<Dropdown
-											menu={{ items: menuItems }}
-											placement="bottomRight"
-											trigger={['click']}
-											arrow
-										>
-											<button className="text-[#7D879C] text-lg hover:text-gray-800">
-												•••
-											</button>
-										</Dropdown>
+									<div className="flex">
+										<div>
+											<span className="text-[#899bbd] text-sm">
+												<b className="text-xl text-[#012970] ">Bestsellers </b>|
+												All
+											</span>
+										</div>
 									</div>
 									{bestsellerData.map((item, index) => (
 										<div className="mt-4" key={index}>

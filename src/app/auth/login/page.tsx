@@ -1,17 +1,56 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Checkbox, Skeleton } from 'antd';
+import qs from 'qs';
+import { Form, Input, Button, Checkbox, Skeleton, message } from 'antd';
 import Image from 'next/image';
+import axios from 'axios';
+import { BASE_URL } from '../../api/api';
+
+interface LoginFormProps {
+	password: string;
+	username: string;
+}
 
 const LoginForm = () => {
 	const [loading, setLoading] = useState(true);
+	const [isLogin, setIsLogin] = useState(false);
 
 	useEffect(() => {
 		setTimeout(() => {
 			setLoading(false);
 		}, 1000);
 	}, []);
+
+	const handleLogin = async (values: LoginFormProps) => {
+		console.log('Login values:', values.password + ' ' + values.username);
+		setIsLogin(true);
+		try {
+			const response = await axios.post(
+				`${BASE_URL}/auth/jwt/login`,
+				qs.stringify({
+					username: values.username,
+					password: values.password,
+				})
+			);
+			message.success('Login successful!');
+			console.log('Response:', response.data);
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+				console.error('Error:', error.response?.data || error.message);
+				message.error(
+					error.response?.data?.detail[0]?.msg ||
+						error.response?.data?.detail?.reason ||
+						error.response?.data?.detail
+				);
+			} else {
+				console.error('Unexpected error:', error);
+				message.error('An unexpected error occurred!');
+			}
+		} finally {
+			setIsLogin(false);
+		}
+	};
 
 	if (loading) {
 		return (
@@ -53,6 +92,7 @@ const LoginForm = () => {
 				<Form
 					name="login"
 					initialValues={{ remember: true }}
+					onFinish={handleLogin}
 					className="space-y-4"
 				>
 					<Form.Item
@@ -86,6 +126,8 @@ const LoginForm = () => {
 							type="primary"
 							htmlType="submit"
 							className="w-full h-10 bg-blue-500 hover:bg-blue-600"
+							loading={isLogin}
+							block
 						>
 							Login
 						</Button>

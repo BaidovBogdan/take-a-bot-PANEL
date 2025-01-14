@@ -126,7 +126,9 @@ export const CardStores = () => {
 					<Card className="shadow-sm w-4/6">
 						<div className="flex flex-col md:flex-row md:justify-between md:items-center">
 							<div>
-								<h3 className="text-lg font-semibold">Store: {store.name}</h3>
+								<h3 className="text-lg text-[#012970] font-semibold">
+									Store: {store.name}
+								</h3>
 								<p className="text-gray-600">Seller ID: {store.sellerId}</p>
 								<p className="text-gray-600">API Key: {store.apiKey}</p>
 							</div>

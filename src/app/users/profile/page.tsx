@@ -38,7 +38,7 @@ export default function Profile() {
 						</span>
 					</div>
 					<div className="flex flex-col md:flex-row md:justify-start">
-						<div className="w-full md:mr-96">
+						<div className="w-full">
 							<Tabs
 								defaultActiveKey="1"
 								items={tabItems}

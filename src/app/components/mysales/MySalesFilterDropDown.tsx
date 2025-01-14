@@ -110,7 +110,9 @@ export const FilterMenuMySales: React.FC<FilterMenuProps> = ({
 
 	return (
 		<Dropdown menu={{ items }} trigger={['click']} arrow>
-			<button className="text-gray-500 hover:text-gray-800">•••</button>
+			<button className="text-[#7D879C] text-sm hover:text-gray-800">
+				•••
+			</button>
 		</Dropdown>
 	);
 };

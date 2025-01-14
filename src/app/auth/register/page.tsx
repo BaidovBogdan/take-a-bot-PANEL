@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Checkbox, Skeleton, message } from 'antd';
+import { requestVerifyToken } from '../../api/api';
 import Image from 'next/image';
 import axios from 'axios';
+import { BASE_URL } from '../../api/api';
 
 interface RegisterFormProps {
 	email: string;
@@ -17,7 +19,7 @@ interface RegisterFormProps {
 
 const RegisterForm = () => {
 	const [loading, setLoading] = useState<boolean>(true);
-	const [isRegsiter, setIsRegister] = useState<boolean>(false);
+	const [isRegister, setIsRegister] = useState<boolean>(false);
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -47,32 +49,25 @@ const RegisterForm = () => {
 	const handleRegister = async (values: RegisterFormProps) => {
 		setIsRegister(true);
 		try {
-			const response = await axios.post(
-				'http://13.246.12.216/auth/register',
-				{
-					email: values.email,
-					password: values.password,
-					confirm_password: values.confirm,
-					username: values.username,
-					is_active: true,
-					is_superuser: false,
-					is_verified: false,
-				},
-				{
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					withCredentials: true,
-				}
-			);
+			const response = await axios.post(`${BASE_URL}/auth/register`, {
+				email: values.email,
+				password: values.password,
+				confirm_password: values.confirm,
+				username: values.username,
+				is_active: true,
+				is_superuser: false,
+				is_verified: false,
+			});
 			message.success('Registration successful!');
+			requestVerifyToken({ email: values.email });
 			console.log('Response:', response.data);
 		} catch (error: unknown) {
 			if (axios.isAxiosError(error)) {
 				console.error('Error:', error.response?.data || error.message);
 				message.error(
 					error.response?.data?.detail[0]?.msg ||
-						error.response?.data?.detail?.reason
+						error.response?.data?.detail?.reason ||
+						error.response?.data?.detail
 				);
 			} else {
 				console.error('Unexpected error:', error);
@@ -180,7 +175,7 @@ const RegisterForm = () => {
 							type="primary"
 							htmlType="submit"
 							className="w-full h-10 bg-blue-500 hover:bg-blue-600"
-							loading={isRegsiter}
+							loading={isRegister}
 						>
 							Register
 						</Button>

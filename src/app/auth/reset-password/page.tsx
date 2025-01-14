@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Skeleton } from 'antd';
+import { Form, Input, Button, Skeleton, message } from 'antd';
 import Image from 'next/image';
+import { forgotPassword } from '../../api/api';
 import { useRouter } from 'next/navigation';
 
 const ResetPassword = () => {
 	const [loading, setLoading] = useState(true);
+	const [isReset, setIsReset] = useState(false);
 	const router = useRouter();
 
 	useEffect(() => {
@@ -15,8 +17,19 @@ const ResetPassword = () => {
 		}, 1000);
 	}, []);
 
-	const onFinishFailed = (errorInfo: unknown) => {
-		console.log('Failed:', errorInfo);
+	const onFinish = async (values: { email: string }) => {
+		try {
+			await forgotPassword({ email: values.email });
+			message.success('Password reset email has been sent!');
+			router.push('/auth/reset-password/done');
+		} catch (error: unknown) {
+			console.error('Error:', error);
+			message.error(
+				error instanceof Error ? error.message : 'An unexpected error occurred.'
+			);
+		} finally {
+			setIsReset(false);
+		}
 	};
 
 	if (loading) {
@@ -58,8 +71,7 @@ const ResetPassword = () => {
 				<Form
 					name="resetPassword"
 					initialValues={{ remember: true }}
-					onFinish={() => router.push('/auth/reset-password/done')}
-					onFinishFailed={onFinishFailed}
+					onFinish={onFinish}
 					className="space-y-4"
 				>
 					<Form.Item
@@ -81,6 +93,8 @@ const ResetPassword = () => {
 							type="primary"
 							htmlType="submit"
 							className="w-full h-10 bg-blue-500 hover:bg-blue-600"
+							loading={isReset}
+							block
 						>
 							Send
 						</Button>

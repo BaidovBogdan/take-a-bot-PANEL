@@ -47,14 +47,20 @@ export const ChartComponent = () => {
 		<>
 			<div className="flex flex-col gap-2 bg-white shadow-md rounded-lg p-4">
 				<div className="flex justify-between">
-					<span className="text-gray-500 font-bold">Sales | All</span>
+					<div>
+						<span className="text-[#899bbd] text-sm">
+							<b className="text-xl text-[#012970] ">Sales </b>| All
+						</span>
+					</div>
 					<Dropdown
 						menu={{ items: menuItems }}
 						placement="bottomLeft"
 						trigger={['click']}
 						arrow
 					>
-						<button className="text-gray-500 hover:text-gray-800">•••</button>
+						<button className="text-gray-500 text-sm hover:text-gray-800">
+							•••
+						</button>
 					</Dropdown>
 				</div>
 				<Line {...config} />

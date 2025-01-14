@@ -10,7 +10,7 @@ import {
 	Button,
 	Skeleton,
 } from 'antd';
-import { CopyOutlined, DownOutlined } from '@ant-design/icons';
+import { CopyOutlined, DownOutlined, UndoOutlined } from '@ant-design/icons';
 import { SetStateAction, useEffect, useState } from 'react';
 import { FilterMenuMySales } from '../components/mysales/MySalesFilterDropDown';
 
@@ -96,6 +96,7 @@ export default function MySales() {
 			dataIndex: 'id',
 			key: 'id',
 			sorter: (a: { id: number }, b: { id: number }) => a.id - b.id,
+			render: (id: string) => <span className="text-gray-500">{id}</span>,
 		},
 		{
 			title: 'Date',
@@ -112,6 +113,14 @@ export default function MySales() {
 			key: 'title',
 			sorter: (a: { title: string }, b: { title: string }) =>
 				a.title.localeCompare(b.title),
+			render: (title: string) => (
+				<span
+					className="hover:underline text-base font-bold hover:cursor-pointer"
+					style={{ color: '#00215c' }}
+				>
+					{title}
+				</span>
+			),
 		},
 		{
 			title: 'Quantity',
@@ -120,6 +129,11 @@ export default function MySales() {
 			align: 'center',
 			sorter: (a: { quantity: number }, b: { quantity: number }) =>
 				a.quantity - b.quantity,
+			render: (quantity: number) => (
+				<Tag className="p-1 w-8 bg-blue-950 rounded-lg text-white text-center text-base ">
+					{quantity}
+				</Tag>
+			),
 		},
 		{
 			title: 'Status',
@@ -134,7 +148,11 @@ export default function MySales() {
 						: status === 'Returned'
 						? 'red'
 						: 'blue';
-				return <Tag color={color}>{status}</Tag>;
+				return (
+					<Tag className="p-1 w-24 text-center" color={color}>
+						{status}
+					</Tag>
+				);
 			},
 		},
 		{
@@ -143,18 +161,23 @@ export default function MySales() {
 			key: 'dc',
 			sorter: (a: { dc: string }, b: { dc: string }) =>
 				a.dc.localeCompare(b.dc),
+			render: (dc: string) => <span className="text-gray-600">{dc}</span>,
 		},
 		{
 			title: 'Price',
 			dataIndex: 'price',
 			key: 'price',
 			sorter: (a: { price: number }, b: { price: number }) => a.price - b.price,
+			render: (price: number) => <b>R {price}</b>,
 		},
 		{
 			title: 'Fee',
 			dataIndex: 'fee',
 			key: 'fee',
 			sorter: (a: { fee: number }, b: { fee: number }) => a.fee - b.fee,
+			render: (fee: number) => (
+				<Tag className="p-1 w-12 text-center text-base">{fee}</Tag>
+			),
 		},
 		{
 			title: 'Cost',
@@ -167,7 +190,11 @@ export default function MySales() {
 						style={{ width: '70px' }}
 						size="small"
 					/>
-					<Button icon={<CopyOutlined />} size="small" />
+					<Button
+						className="bg-blue-950 text-white"
+						icon={<CopyOutlined />}
+						size="small"
+					/>
 				</div>
 			),
 		},
@@ -177,6 +204,11 @@ export default function MySales() {
 			key: 'profit',
 			sorter: (a: { profit: number }, b: { profit: number }) =>
 				a.profit - b.profit,
+			render: (profit: number) => (
+				<Tag className="p-1 w-20 text-center text-white text-base" color="red">
+					{profit}
+				</Tag>
+			),
 		},
 		{
 			title: 'Invoice for Customer',
@@ -210,7 +242,6 @@ export default function MySales() {
 							className="flex justify-between items-center text-[#7D879C]"
 							style={{ width: '150px' }}
 							icon={<DownOutlined />}
-							iconPosition="end"
 						>
 							<span>{record.customer}</span>
 						</Button>
@@ -251,22 +282,27 @@ export default function MySales() {
 							<br />
 							<span className="text-xs text-gray-700 p-4">Home / My Sales</span>
 						</div>
-						<Button type="primary" className="bg-blue-500 w-56 md:w-auto">
+						<Button
+							type="primary"
+							className="custom-btn bg-[#00215C] h-10 w-64 md:w-auto transition-colors duration-300"
+							icon={<UndoOutlined />}
+							iconPosition="start"
+						>
 							Update Sales
 						</Button>
 					</div>
 				</div>
 				<div className="bg-white shadow-md rounded-lg">
-					<div className="p-4 flex justify-between">
-						<div className="text-gray-500 font-bold">Filters | All</div>
+					<div className="flex justify-between p-4">
+						<span className="text-[#899bbd] text-sm">
+							<b className="text-xl text-[#012970] ">Filters </b>| All
+						</span>
 						<FilterMenuMySales onApplyFilters={() => {}} />
 					</div>
 
 					<div className="flex flex-col gap-4 md:flex-row md:justify-between md:gap-0 items-center p-2 mb-4">
 						<div>
-							<span className="font-bold text-gray-800 mr-2">
-								Entries per page:
-							</span>
+							<span className="text-gray-800 ml-6">Entries per page:</span>
 							<Select
 								//@ts-expect-error: Temporary workaround for Select value type mismatch
 								defaultValue="10"
@@ -287,7 +323,7 @@ export default function MySales() {
 							onChange={handleSearchChange}
 						/>
 						<span className="text-gray-600">
-							Showing {paginatedData.length} of {filteredData.length} entries
+							Showing {paginatedData.length} of {data.length} entries
 						</span>
 					</div>
 
@@ -297,6 +333,9 @@ export default function MySales() {
 						className="overflow-x-auto md:overflow-x-hidden"
 						dataSource={paginatedData}
 						pagination={false}
+						rowClassName={(record, index) =>
+							index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
+						}
 						rowKey={(record) => record.id}
 					/>
 
