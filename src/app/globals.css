@@ -42,6 +42,7 @@ body {
 	display: flex;
 	justify-content: center;
 }
+
 .ant-tabs-nav-list {
 	display: flex;
 	flex-direction: row;
@@ -54,6 +55,11 @@ body {
 		align-items: center;
 		justify-content: center;
 	}
+
+	.md\:w-64 {
+		width: 10rem;
+	}
+
 	.ant-menu {
 		display: flex;
 		flex-direction: column;
@@ -69,12 +75,43 @@ body {
 	}
 }
 
-.custom-btn {
-	background-color: #00215c !important; /* Ваш основной цвет */
-	border: none !important; /* Убирает стиль от Ant Design */
+/* Анимация для сайдбара */
+@keyframes sidebarSlideIn {
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(0);
+	}
 }
 
-.custom-btn:hover {
-	background-color: #002f81d3 !important; /* Цвет при hover */
-	transition: background-color 0.3s !important; /* Добавляем плавность */
+@keyframes sidebarSlideOut {
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-100%);
+	}
+}
+
+/* Классы анимации */
+.animate-sidebar {
+	animation: sidebarSlideIn 0.3s ease-in-out forwards;
+}
+
+/* Для меньших экранов, сайдбар поверх контента */
+@media (max-width: 1920px) {
+	.fixed {
+		position: fixed;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		width: 250px;
+		z-index: 1000;
+	}
+
+	.inset-0 {
+		left: 0;
+		top: 0;
+	}
 }

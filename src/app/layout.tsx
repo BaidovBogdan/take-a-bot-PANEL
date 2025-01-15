@@ -45,7 +45,7 @@ export default function RootLayout({
 					{showSidebar && (
 						<Sidebar
 							visible={burgerCheckA}
-							className={`w-full md:w-64 ${burgerCheckA ? 'block' : 'hidden'}`}
+							className={`w-full md:w-48 ${burgerCheckA ? 'block' : 'hidden'}`}
 						/>
 					)}
 					<main className="flex-1 transition-all duration-500 ease-in-out w-full">

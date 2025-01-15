@@ -75,8 +75,8 @@ export const CardMyOffers = () => {
 		setIsDisabled((prev) => !prev);
 	};
 	return (
-		<div className="md:p-6 bg-white shadow-md rounded-lg w-full flex gap-5 h-full flex-col md:flex-row">
-			<div className="flex items-center jus p-4">
+		<div className="lg:p-6 bg-white shadow-md rounded-lg w-full flex gap-5 h-full flex-col lg:flex-row">
+			<div className="flex items-center p-4">
 				<Image src="/cosmetics.jpg" width={500} height={500} alt="product" />
 			</div>
 			<div className="p-4 w-full">
@@ -87,7 +87,7 @@ export const CardMyOffers = () => {
 						<span className="text-gray-600">My price</span>
 						<b className="text-[#dc3545] text-xl font-bold">R 23232.00</b>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Market price</span>
 						<p className="text-black">R 95.00</p>
 						<span className="text-gray-600">Competitors:</span>
@@ -100,34 +100,34 @@ export const CardMyOffers = () => {
 			</div>
 			<div className="p-4 w-full">
 				<div className="flex flex-col gap-2">
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Total sold unit</span>
 						<p className="bg-[#00215C] text-center rounded-lg text-white p-1 w-8">
 							5
 						</p>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<Tag color="red">0</Tag>
 						<Tag color="red">0</Tag>
 						<Tag color="red">0</Tag>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Revenue</span>
 						<p className="text-black">R 570.00</p>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Total profit</span>
 						<p className="text-black">R 250.50</p>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Avg. price</span>
 						<p className="text-black">R 90.50</p>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Total fee’s</span>
 						<p className="text-black">R 319.50</p>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Cost price</span>
 						<span
 							className="text-[#00215C] font-bold underline hover:text-blue-600 cursor-pointer hover:no-underline"
@@ -136,7 +136,7 @@ export const CardMyOffers = () => {
 							Set value
 						</span>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<button className="bg-[#00215C] rounded-lg text-white p-1 w-20">
 							<ReloadOutlined />
 						</button>{' '}
@@ -151,7 +151,7 @@ export const CardMyOffers = () => {
 			</div>
 			<div className="p-4 w-full">
 				<div className="flex flex-col gap-2">
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Autoprice status</span>
 						<button
 							className={`p-1 px-2 border-2 font-bold text-sm rounded-md ${
@@ -164,7 +164,7 @@ export const CardMyOffers = () => {
 							{isDisabled ? 'DISABLE' : 'ENABLE'}
 						</button>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Min price</span>
 						<p
 							className="text-[#00215C] font-bold text-sm underline hover:text-blue-600 cursor-pointer hover:no-underline"
@@ -180,13 +180,13 @@ export const CardMyOffers = () => {
 							R 232323.00
 						</p>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Weekly sales</span>
 						<p className="text-black">None</p>
 						<span className="text-gray-600">Monthly sales</span>
 						<p className="text-black">4</p>
 					</div>
-					<div className="flex md:gap-0 justify-between">
+					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Profit</span>
 						<p className="text-green-500 font-bold text-sm">R 41.75</p>
 					</div>

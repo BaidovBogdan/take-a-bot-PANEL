@@ -330,7 +330,7 @@ export default function MySales() {
 					<Table
 						//@ts-expect-error: Column data type mismatch for pagination
 						columns={columns}
-						className="overflow-x-auto md:overflow-x-hidden"
+						className="overflow-x-auto xl:overflow-x-hidden"
 						dataSource={paginatedData}
 						pagination={false}
 						rowClassName={(record, index) =>

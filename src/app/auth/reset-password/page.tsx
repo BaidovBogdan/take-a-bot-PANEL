@@ -3,12 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Skeleton, message } from 'antd';
 import Image from 'next/image';
-import { forgotPassword } from '../../api/api';
+import { useForgotPassword } from '../../api/api';
 import { useRouter } from 'next/navigation';
 
 const ResetPassword = () => {
 	const [loading, setLoading] = useState(true);
 	const [isReset, setIsReset] = useState(false);
+	const { forgotPassword } = useForgotPassword();
 	const router = useRouter();
 
 	useEffect(() => {
@@ -20,7 +21,7 @@ const ResetPassword = () => {
 	const onFinish = async (values: { email: string }) => {
 		setIsReset(true);
 		try {
-			await forgotPassword({ email: values.email });
+			await forgotPassword(values.email);
 			router.push('/auth/reset-password/done');
 		} catch (error: unknown) {
 			console.error('Error:', error);

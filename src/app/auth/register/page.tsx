@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Checkbox, Skeleton, message } from 'antd';
-import { requestVerifyToken } from '../../api/api';
+import { useRequestVerifyToken } from '../../api/api';
 import Image from 'next/image';
 import axios from 'axios';
 import { BASE_URL } from '../../api/api';
@@ -19,6 +19,7 @@ interface RegisterFormProps {
 }
 
 const RegisterForm = () => {
+	const { requestVerifyToken } = useRequestVerifyToken();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [isRegister, setIsRegister] = useState<boolean>(false);
 	const router = useRouter();
@@ -61,7 +62,7 @@ const RegisterForm = () => {
 				is_verified: false,
 			});
 			message.success('Registration successful!');
-			requestVerifyToken({ email: values.email });
+			requestVerifyToken(values.email);
 			router.push('/auth/login');
 			console.log('Response:', response.data);
 		} catch (error: unknown) {

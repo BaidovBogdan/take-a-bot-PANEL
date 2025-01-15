@@ -1,10 +1,11 @@
 'use client';
-import { resetPassword } from '@/app/api/api';
+import { useResetPassword } from '@/app/api/api';
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Skeleton, message, Input } from 'antd';
 import Image from 'next/image';
 
 const ResetPasswordDone = () => {
+	const { resetPassword } = useResetPassword();
 	const [loading, setLoading] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,8 +36,9 @@ const ResetPasswordDone = () => {
 		setIsSubmitting(true);
 		const { token, password } = values;
 		try {
-			await resetPassword({ token, password });
-		} catch (error) {
+			await resetPassword(token, password);
+		} catch (error: unknown) {
+			console.error('Error:', error);
 			message.error('An error occurred. Please try again.');
 		} finally {
 			setIsSubmitting(false);

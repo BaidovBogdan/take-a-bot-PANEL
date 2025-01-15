@@ -30,13 +30,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ className, visible }) => {
 		return () => clearTimeout(timer);
 	}, []);
 
+	const sidebarClass = visible
+		? 'translate-x-0 animate-sidebar'
+		: 'translate-x-full animate-sidebar-closed';
+
 	return (
 		<div
-			className={`text-blue-700 h-screen rounded-md flex-shrink-0 ${
+			className={`text-blue-700 mt-16 3xl:mt-0 h-screen rounded-md flex-shrink-0 transition-transform duration-300 ease-in-out ${
 				!loading ? 'bg-white shadow-md' : ''
-			} transition-all duration-500 ease-in-out ${
-				visible ? 'translate-x-0' : '-translate-x-full'
-			} ${className || ''}`}
+			} ${sidebarClass} ${className || ''} fixed 3xl:relative z-50`}
 		>
 			{loading ? (
 				<Skeleton avatar paragraph={{ rows: 6 }} active />
