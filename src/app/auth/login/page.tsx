@@ -6,6 +6,9 @@ import { Form, Input, Button, Checkbox, Skeleton, message } from 'antd';
 import Image from 'next/image';
 import axios from 'axios';
 import { BASE_URL } from '../../api/api';
+import { accessTokenAtom } from '@/app/atoms/atoms';
+import { useAtom } from 'jotai';
+import { useRouter } from 'next/navigation';
 
 interface LoginFormProps {
 	password: string;
@@ -14,6 +17,8 @@ interface LoginFormProps {
 
 const LoginForm = () => {
 	const [loading, setLoading] = useState(true);
+	const [, setAccessTokenAtom] = useAtom(accessTokenAtom);
+	const router = useRouter();
 	const [isLogin, setIsLogin] = useState(false);
 
 	useEffect(() => {
@@ -33,8 +38,11 @@ const LoginForm = () => {
 					password: values.password,
 				})
 			);
-			message.success('Login successful!');
+			setAccessTokenAtom(response.data.access_token);
+			router.push('/users/profile');
 			console.log('Response:', response.data);
+			console.log('Access token has been set.');
+			message.success('Login successful!');
 		} catch (error: unknown) {
 			if (axios.isAxiosError(error)) {
 				console.error('Error:', error.response?.data || error.message);
@@ -97,12 +105,12 @@ const LoginForm = () => {
 				>
 					<Form.Item
 						name="username"
-						rules={[{ required: true, message: 'Please input your username!' }]}
+						rules={[{ required: true, message: 'Please input your email!' }]}
 					>
 						<Input
 							prefix={<span>@</span>}
-							placeholder="Enter your username"
-							autoComplete="username"
+							placeholder="Enter your email"
+							autoComplete="email"
 							className="h-10"
 						/>
 					</Form.Item>

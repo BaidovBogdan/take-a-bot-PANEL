@@ -18,9 +18,9 @@ const ResetPassword = () => {
 	}, []);
 
 	const onFinish = async (values: { email: string }) => {
+		setIsReset(true);
 		try {
 			await forgotPassword({ email: values.email });
-			message.success('Password reset email has been sent!');
 			router.push('/auth/reset-password/done');
 		} catch (error: unknown) {
 			console.error('Error:', error);

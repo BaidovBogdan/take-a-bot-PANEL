@@ -1,16 +1,15 @@
+'use client';
 import { Button, Form, Input } from 'antd';
+import { useState } from 'react';
 
 export const ChangePassword = () => {
-	function onFinish() {
-		throw new Error('Function not implemented.');
-	}
+	const [newPassword, setNewPassword] = useState('');
 
 	return (
 		<div className="flex justify-center">
 			<Form
 				layout="horizontal"
 				labelAlign="left"
-				onFinish={onFinish}
 				className="bg-white shadow-md rounded-lg p-4 md:w-1/2"
 			>
 				<Form.Item
@@ -39,6 +38,8 @@ export const ChangePassword = () => {
 					wrapperCol={{ span: 16 }}
 				>
 					<Input.Password
+						value={newPassword}
+						onChange={(e) => setNewPassword(e.target.value)}
 						placeholder="Enter your new password"
 						className="rounded w-full"
 					/>

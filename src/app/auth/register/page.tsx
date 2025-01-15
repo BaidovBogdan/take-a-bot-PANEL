@@ -6,6 +6,7 @@ import { requestVerifyToken } from '../../api/api';
 import Image from 'next/image';
 import axios from 'axios';
 import { BASE_URL } from '../../api/api';
+import { useRouter } from 'next/navigation';
 
 interface RegisterFormProps {
 	email: string;
@@ -20,6 +21,7 @@ interface RegisterFormProps {
 const RegisterForm = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [isRegister, setIsRegister] = useState<boolean>(false);
+	const router = useRouter();
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -60,6 +62,7 @@ const RegisterForm = () => {
 			});
 			message.success('Registration successful!');
 			requestVerifyToken({ email: values.email });
+			router.push('/auth/login');
 			console.log('Response:', response.data);
 		} catch (error: unknown) {
 			if (axios.isAxiosError(error)) {

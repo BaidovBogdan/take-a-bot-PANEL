@@ -1,11 +1,12 @@
 'use client';
-
+import { resetPassword } from '@/app/api/api';
 import React, { useEffect, useState } from 'react';
-import { Skeleton } from 'antd';
+import { Button, Form, Skeleton, message, Input } from 'antd';
 import Image from 'next/image';
 
 const ResetPasswordDone = () => {
 	const [loading, setLoading] = useState(true);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -22,11 +23,25 @@ const ResetPasswordDone = () => {
 						<Skeleton.Input active className="w-64 mx-auto mb-4 h-10" />
 						<Skeleton.Input active className="w-64 mx-auto mb-4 h-10" />
 						<Skeleton.Input active className="w-64 mx-auto mb-4 h-10" />
+						<Skeleton.Input active className="w-64 mx-auto mb-4 h-10" />
+						<Skeleton.Input active className="w-64 mx-auto mb-4 h-10" />
 					</div>
 				</div>
 			</div>
 		);
 	}
+
+	const onFinish = async (values: { token: string; password: string }) => {
+		setIsSubmitting(true);
+		const { token, password } = values;
+		try {
+			await resetPassword({ token, password });
+		} catch (error) {
+			message.error('An error occurred. Please try again.');
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
 	return (
 		<div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -59,6 +74,50 @@ const ResetPasswordDone = () => {
 						TakeaBot
 					</a>
 				</p>
+				<div className="flex justify-center items-center pt-10 bg-gray-100">
+					<Form
+						onFinish={onFinish}
+						layout="vertical"
+						className="bg-white shadow-md rounded-lg p-6 w-full max-w-md"
+					>
+						<Form.Item
+							label={<span className="text-lg text-[#012970]">Token</span>}
+							name="token"
+							rules={[{ required: true, message: 'Please enter your token' }]}
+						>
+							<Input placeholder="Enter your token" className="rounded" />
+						</Form.Item>
+
+						<Form.Item
+							label={<span className="text-lg text-[#012970]">Password</span>}
+							name="password"
+							rules={[
+								{ required: true, message: 'Please enter your password' },
+								{
+									min: 6,
+									message: 'Password must be at least 6 characters long',
+								},
+							]}
+						>
+							<Input.Password
+								placeholder="Enter your password"
+								className="rounded"
+							/>
+						</Form.Item>
+
+						<Form.Item>
+							<Button
+								type="primary"
+								htmlType="submit"
+								className="w-full"
+								loading={isSubmitting}
+								block
+							>
+								Submit
+							</Button>
+						</Form.Item>
+					</Form>
+				</div>
 			</div>
 		</div>
 	);

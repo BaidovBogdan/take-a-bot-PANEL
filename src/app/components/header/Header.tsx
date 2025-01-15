@@ -11,8 +11,12 @@ import { burgerCheckAtom } from '../../atoms/atoms';
 import Image from 'next/image';
 import { Dropdown, Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
+import { useLogout } from '../../api/api';
+import { accessTokenAtom } from '../../atoms/atoms';
 
 export const Header = () => {
+	const [accessToken, setAccessTokenAtom] = useAtom(accessTokenAtom);
+	const { logout } = useLogout();
 	const [, setBurgerCheckA] = useAtom(burgerCheckAtom);
 	const router = useRouter();
 
@@ -22,6 +26,12 @@ export const Header = () => {
 		const timer = setTimeout(() => setLoading(false), 1000);
 		return () => clearTimeout(timer);
 	}, []);
+
+	const handleLogout = async () => {
+		await logout(accessToken);
+		setAccessTokenAtom('');
+		router.push('/auth/login');
+	};
 
 	if (loading) {
 		return (
@@ -63,6 +73,7 @@ export const Header = () => {
 				key: 'logout',
 				icon: <LogoutOutlined />,
 				danger: true,
+				onClick: handleLogout,
 			},
 		];
 
@@ -70,9 +81,6 @@ export const Header = () => {
 			<Dropdown
 				menu={{
 					items: menuItems,
-					onClick: ({ key }) => {
-						console.log(`Menu item clicked: ${key}`);
-					},
 				}}
 				trigger={['click']}
 				placement="bottomRight"

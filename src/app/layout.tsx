@@ -35,6 +35,8 @@ export default function RootLayout({
 		pathname === '/auth/reset-password' ||
 		pathname === '/auth/reset-password/done';
 
+	console.log('burgerCheckAtom:', burgerCheckA);
+
 	return (
 		<html lang="en" className={nunito.variable}>
 			<body className="antialiased flex flex-col min-h-screen w-full">
