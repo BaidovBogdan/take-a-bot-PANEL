@@ -4,37 +4,76 @@ import { ReloadOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Tag, Modal, Input, Button } from 'antd';
 import { useState } from 'react';
+import { OffersData } from '@/app/atoms/atoms';
+import { useOffers } from '@/app/api/api';
 
 interface CardMyOffersProps {
 	isVisible: boolean;
 	onClose: () => void;
+	id: number;
 }
 
-const EditOfferModal = ({ isVisible, onClose }: CardMyOffersProps) => {
+interface CardMyOffersProps {
+	offer: OffersData;
+}
+
+const EditOfferModal = ({ isVisible, onClose, id }: CardMyOffersProps) => {
+	const { editOffers } = useOffers();
+	const [minPrice, setMinPrice] = useState('');
+	const [selfCostPrice, setSelfCostPrice] = useState('');
+	const [maxPrice, setMaxPrice] = useState('');
+	const [myPrice, setMyPrice] = useState('');
+
+	const handleEditOffer = () => {
+		editOffers({
+			offer_id: id,
+			min_price: Number(minPrice),
+			max_price: Number(maxPrice),
+			cost_price: Number(selfCostPrice),
+			selling_price: Number(myPrice),
+		});
+		onClose();
+	};
+
 	return (
 		<Modal title="Edit Offer" open={isVisible} onCancel={onClose} footer={null}>
-			<p className="mb-4">Offer updated successfully</p>
 			<div className="grid grid-cols-2 gap-4">
 				<div>
 					<label className="block text-gray-700 mb-1">Min Price</label>
-					<Input defaultValue="1.00" />
+					<Input
+						placeholder="Please enter min price"
+						value={minPrice}
+						onChange={(e) => setMinPrice(e.target.value)}
+					/>
 				</div>
 				<div>
 					<label className="block text-gray-700 mb-1">Self-cost Price</label>
-					<Input defaultValue="None" />
+					<Input
+						placeholder="Please enter self-cost price"
+						value={selfCostPrice}
+						onChange={(e) => setSelfCostPrice(e.target.value)}
+					/>
 				</div>
 				<div>
 					<label className="block text-gray-700 mb-1">Max Price</label>
-					<Input defaultValue="232323.00" />
+					<Input
+						placeholder="Please enter max price"
+						value={maxPrice}
+						onChange={(e) => setMaxPrice(e.target.value)}
+					/>
 				</div>
 				<div>
 					<label className="block text-gray-700 mb-1">My Price</label>
-					<Input defaultValue="23232.00" />
+					<Input
+						placeholder="Please enter my price"
+						value={myPrice}
+						onChange={(e) => setMyPrice(e.target.value)}
+					/>
 				</div>
 			</div>
 			<div className="mt-6 text-right">
 				<Button
-					onClick={onClose}
+					onClick={() => handleEditOffer()}
 					type="primary"
 					className="custom-btn bg-[#00215C] h-10 w-64 md:w-auto transition-colors duration-300"
 				>
@@ -67,21 +106,29 @@ const ChartComponentMyOffers = () => {
 	);
 };
 
-export const CardMyOffers = () => {
+export const CardMyOffers: React.FC<{ offer: OffersData }> = ({ offer }) => {
 	const [isDisabled, setIsDisabled] = useState(true);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const { autoPriceOffers } = useOffers();
+
+	const isMinOrMaxPriceNull =
+		offer.min_price === null || offer.max_price === null;
 
 	const handleClick = () => {
 		setIsDisabled((prev) => !prev);
+		autoPriceOffers(offer.id);
 	};
 	return (
-		<div className="lg:p-6 bg-white shadow-md rounded-lg w-full flex gap-5 h-full flex-col lg:flex-row">
-			<div className="flex items-center p-4">
-				<Image src="/cosmetics.jpg" width={500} height={500} alt="product" />
+		<div
+			className="lg:p-6 bg-white w-full flex gap-5 h-full flex-col lg:flex-row"
+			key={offer.id}
+		>
+			<div className="flex items-center p-4 justify-center">
+				<Image src={offer.image_url} width={500} height={500} alt="product" />
 			</div>
 			<div className="p-4 w-full">
 				<div className="flex flex-col gap-2">
-					<b>ZYXC Professional Magic Gel Remover</b>
+					<b>{offer.title}</b>
 					<br />
 					<div className="flex gap-10 items-center">
 						<span className="text-gray-600">My price</span>
@@ -91,7 +138,7 @@ export const CardMyOffers = () => {
 						<span className="text-gray-600">Market price</span>
 						<p className="text-black">R 95.00</p>
 						<span className="text-gray-600">Competitors:</span>
-						<p className="text-black">0</p>
+						<p className="text-black">{offer.competitors}</p>
 					</div>
 					<div>
 						<ChartComponentMyOffers />
@@ -103,7 +150,7 @@ export const CardMyOffers = () => {
 					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Total sold unit</span>
 						<p className="bg-[#00215C] text-center rounded-lg text-white p-1 w-8">
-							5
+							{offer.total_sales_units}
 						</p>
 					</div>
 					<div className="flex lg:gap-0 justify-between">
@@ -117,7 +164,7 @@ export const CardMyOffers = () => {
 					</div>
 					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Total profit</span>
-						<p className="text-black">R 250.50</p>
+						<p className="text-black">{offer.total_profit} </p>
 					</div>
 					<div className="flex lg:gap-0 justify-between">
 						<span className="text-gray-600">Avg. price</span>
@@ -155,13 +202,27 @@ export const CardMyOffers = () => {
 						<span className="text-gray-600">Autoprice status</span>
 						<button
 							className={`p-1 px-2 border-2 font-bold text-sm rounded-md ${
-								isDisabled
+								isMinOrMaxPriceNull
+									? 'text-white border-red-500 bg-[#00215C]'
+									: !offer.autoprice
+									? 'text-red-500 border-red-500 bg-[#00215C]'
+									: isDisabled
 									? 'text-red-500 border-red-500 bg-[#00215C]'
 									: 'text-green-500 border-green-500 bg-[#00215C]'
 							}`}
-							onClick={handleClick}
+							onClick={
+								isMinOrMaxPriceNull
+									? () => setIsModalVisible(true)
+									: handleClick
+							}
 						>
-							{isDisabled ? 'DISABLE' : 'ENABLE'}
+							{isMinOrMaxPriceNull
+								? 'Set min/max price'
+								: !offer.autoprice
+								? 'DISABLE'
+								: isDisabled
+								? 'DISABLE'
+								: 'ENABLE'}
 						</button>
 					</div>
 					<div className="flex lg:gap-0 justify-between">
@@ -170,14 +231,14 @@ export const CardMyOffers = () => {
 							className="text-[#00215C] font-bold text-sm underline hover:text-blue-600 cursor-pointer hover:no-underline"
 							onClick={() => setIsModalVisible(true)}
 						>
-							R 1.00
+							{offer.min_price}
 						</p>
 						<span className="text-gray-600">Max price</span>
 						<p
 							className="text-[#00215C] font-bold text-sm underline hover:text-blue-600 cursor-pointer hover:no-underline"
 							onClick={() => setIsModalVisible(true)}
 						>
-							R 232323.00
+							{offer.max_price}
 						</p>
 					</div>
 					<div className="flex lg:gap-0 justify-between">
@@ -196,6 +257,7 @@ export const CardMyOffers = () => {
 				</div>
 			</div>
 			<EditOfferModal
+				offer_id={offer.id}
 				isVisible={isModalVisible}
 				onClose={() => setIsModalVisible(false)}
 			/>

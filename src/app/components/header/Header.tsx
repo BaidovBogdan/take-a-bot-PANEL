@@ -12,10 +12,11 @@ import Image from 'next/image';
 import { Dropdown, Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 import { useLogout } from '../../api/api';
-import { accessTokenAtom } from '../../atoms/atoms';
+import { accessTokenAtom, myProfileData } from '../../atoms/atoms';
 
 export const Header = () => {
-	const [accessToken, setAccessTokenAtom] = useAtom(accessTokenAtom);
+	const [, setAccessTokenAtom] = useAtom(accessTokenAtom);
+	const [profileData] = useAtom(myProfileData);
 	const { logout } = useLogout();
 	const [, setBurgerCheckA] = useAtom(burgerCheckAtom);
 	const router = useRouter();
@@ -28,9 +29,12 @@ export const Header = () => {
 	}, []);
 
 	const handleLogout = async () => {
-		await logout(accessToken);
-		setAccessTokenAtom('');
+		await logout();
 		router.push('/auth/login');
+	};
+
+	const handleProfile = () => {
+		router.push('/users/profile');
 	};
 
 	if (loading) {
@@ -57,6 +61,7 @@ export const Header = () => {
 				label: 'My Profile',
 				key: 'profile',
 				icon: <UserOutlined />,
+				onClick: handleProfile,
 			},
 			{
 				label: 'Account Settings',
@@ -96,7 +101,7 @@ export const Header = () => {
 						priority
 					/>
 					<span className="flex items-center">
-						test <span className="ml-1 text-sm">▼</span>
+						{profileData.first_name} <span className="ml-1 text-sm">▼</span>
 					</span>
 				</div>
 			</Dropdown>

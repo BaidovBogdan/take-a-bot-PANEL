@@ -15,9 +15,14 @@ import {
 } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { menuItems } from '../components/dashboard/menuItems';
+import { useDashboard } from '../api/api';
+import { useAtom } from 'jotai';
+import { DashboardData } from '../atoms/atoms';
 
 export default function Dashboard() {
 	const [loading, setLoading] = useState(true);
+	const { getMyDashboard, wsTest } = useDashboard();
+	const [dashboard] = useAtom(DashboardData);
 
 	function highlightDetails(details: string) {
 		return details.replace(
@@ -26,28 +31,37 @@ export default function Dashboard() {
 		);
 	}
 
+	useEffect(() => {
+		getMyDashboard();
+		wsTest();
+	}, []);
+
 	const cardData = [
 		{
 			title: 'Sales ',
-			subTitle: '| All',
-			value: 'R None',
+			subTitle: `| ${dashboard.sale_filter_label}`,
+			value: `R ${dashboard.sales_amount}`,
 			details: highlightDetails(
-				'None items for 0 sales Sale price avg. ~ None'
+				`${dashboard.sales_units} items for ${dashboard.sales_total} sales.  Sale price avg. ~ ${dashboard.average_sale_amount}`
 			),
 			icon: <DollarTwoTone />,
 		},
 		{
 			title: 'Returned ',
-			subTitle: '| All',
-			value: 'R 105.00',
-			details: highlightDetails('1 items in 1 returns R 34.50 ~ Lost fee'),
+			subTitle: `| ${dashboard.ret_filter_label}`,
+			value: `R ${dashboard.return_amount}`,
+			details: highlightDetails(
+				`${dashboard.return_units} items in ${dashboard.return_total} returns R ${dashboard.return_total_fee_sum} ~ Lost fee`
+			),
 			icon: <ShoppingTwoTone />,
 		},
 		{
 			title: 'Cancellations ',
-			subTitle: '| All',
-			value: 'R None',
-			details: highlightDetails('None items in 0 canceled R None ~ Lost fee'),
+			subTitle: `| ${dashboard.can_filter_label}`,
+			value: `R ${dashboard.cancelations_amount}`,
+			details: highlightDetails(
+				`${dashboard.cancelations_units} items in ${dashboard.cancelations_total} canceled R ${dashboard.cancelations_total_fee_sum} ~ Lost fee`
+			),
 			icon: <StopTwoTone />,
 		},
 		{
@@ -61,43 +75,23 @@ export default function Dashboard() {
 		},
 	];
 
-	const bestsellerData = [
-		{
-			image: '/profileTest.png',
-			title: 'ZYXC Professional Magic Gel Remover',
-			price: 95,
-			totalPrice: 570,
-			quantity: 6,
-		},
-		{
-			image: '/profileTest.png',
-			title: 'Colorful 5D Flower Nail Stickers',
-			price: 90,
-			totalPrice: 450,
-			quantity: 5,
-		},
-		{
-			image: '/profileTest.png',
-			title: 'Colorful 5D Flower Nail Stickers',
-			price: 90,
-			totalPrice: 450,
-			quantity: 5,
-		},
-		{
-			image: '/profileTest.png',
-			title: 'Colorful 5D Flower Nail Stickers',
-			price: 90,
-			totalPrice: 450,
-			quantity: 5,
-		},
-		{
-			image: '/profileTest.png',
-			title: 'Colorful 5D Flower Nail Stickers',
-			price: 90,
-			totalPrice: 450,
-			quantity: 5,
-		},
-	];
+	const bestsellerData = dashboard?.top_sales?.length
+		? dashboard.top_sales.map((item, index) => ({
+				image: item.image_url || '/profileTest.png',
+				title: item.product_title || 'No Title',
+				price: item.price || 0,
+				totalPrice: item.total_money || 0,
+				quantity: item.total_quantity || 0,
+		  }))
+		: [
+				{
+					image: '/profileTest.png',
+					title: 'No data available',
+					price: 0,
+					totalPrice: 0,
+					quantity: 0,
+				},
+		  ];
 
 	const salesData = [
 		{

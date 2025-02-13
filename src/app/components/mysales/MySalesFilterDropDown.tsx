@@ -43,11 +43,15 @@ export const FilterMenuMySales: React.FC<FilterMenuProps> = ({
 		onApplyFilters(filters);
 	};
 
+	const preventDropdownClose = (e: React.MouseEvent) => {
+		e.stopPropagation();
+	};
+
 	const items = [
 		{
 			key: 'dc',
 			label: (
-				<div className="mb-2">
+				<div className="mb-2" onClick={preventDropdownClose}>
 					<Checkbox.Group
 						options={['CPT', 'JHB']}
 						value={filters.dc}
@@ -61,7 +65,7 @@ export const FilterMenuMySales: React.FC<FilterMenuProps> = ({
 		{
 			key: 'returned',
 			label: (
-				<div className="mb-2">
+				<div className="mb-2" onClick={preventDropdownClose}>
 					<Checkbox
 						checked={filters.returned}
 						onChange={(e) => handleCheckboxChange('returned', e.target.checked)}
@@ -74,7 +78,7 @@ export const FilterMenuMySales: React.FC<FilterMenuProps> = ({
 		{
 			key: 'cancellations',
 			label: (
-				<div className="mb-4">
+				<div className="mb-4" onClick={preventDropdownClose}>
 					<Checkbox
 						checked={filters.cancellations}
 						onChange={(e) =>
@@ -89,7 +93,7 @@ export const FilterMenuMySales: React.FC<FilterMenuProps> = ({
 		{
 			key: 'dateRange',
 			label: (
-				<div className="mb-4">
+				<div className="mb-4" onClick={preventDropdownClose}>
 					<RangePicker
 						style={{ width: '100%' }}
 						value={filters.dateRange}

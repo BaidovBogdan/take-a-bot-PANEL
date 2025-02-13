@@ -1,4 +1,5 @@
 'use client';
+import { motion } from 'framer-motion';
 import { Nunito } from 'next/font/google';
 import { usePathname } from 'next/navigation';
 import { Sidebar } from './components/sidebar/Sidebar';
@@ -8,6 +9,7 @@ import { useAtom } from 'jotai';
 import { burgerCheckAtom } from './atoms/atoms';
 import '@ant-design/v5-patch-for-react-19';
 import './globals.css';
+import { useEffect, useState } from 'react';
 
 const nunito = Nunito({
 	subsets: ['latin'],
@@ -20,9 +22,10 @@ export default function RootLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	const [burgerCheckA] = useAtom(burgerCheckAtom);
-
+	const [burgerCheckA, setBurgerCheckA] = useAtom(burgerCheckAtom);
+	const [isLargeScreen, setIsLargeScreen] = useState(false);
 	const pathname = usePathname();
+
 	const showSidebar =
 		pathname !== '/auth/login' &&
 		pathname !== '/auth/register' &&
@@ -35,7 +38,25 @@ export default function RootLayout({
 		pathname === '/auth/reset-password' ||
 		pathname === '/auth/reset-password/done';
 
-	console.log('burgerCheckAtom:', burgerCheckA);
+	useEffect(() => {
+		const handleResize = () => {
+			setIsLargeScreen(window.innerWidth >= 1920);
+		};
+
+		const handleScroll = () => {
+			if (!isLargeScreen && burgerCheckA) {
+				setBurgerCheckA(false);
+			}
+		};
+
+		handleResize();
+		window.addEventListener('resize', handleResize);
+		window.addEventListener('scroll', handleScroll);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, [burgerCheckA, setBurgerCheckA, isLargeScreen]);
 
 	return (
 		<html lang="en" className={nunito.variable}>

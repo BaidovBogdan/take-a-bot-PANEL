@@ -1,41 +1,27 @@
-import { Button, Form, Input, Avatar, Upload, UploadProps } from 'antd';
-import { useState } from 'react';
-import type { UploadRequestOption } from 'rc-upload/lib/interface';
+import { Button, Form, Input, Avatar, Upload } from 'antd';
+
+import { useChangeProfile } from '../../../api/api';
+
+interface ProfileI {
+	first_name: string;
+	last_name: string;
+	photo: string;
+	phone: string;
+}
 
 export const ProfileForm: React.FC = () => {
-	const [imageUrl, setImageUrl] = useState<string>(
-		'https://cdn-icons-png.flaticon.com/512/847/847969.png'
-	);
+	const [form] = Form.useForm();
+	const { changeProfile } = useChangeProfile();
 
-	const uploadProps: UploadProps = {
-		beforeUpload: (file) => {
-			const isImage =
-				file.type === 'image/jpeg' ||
-				file.type === 'image/png' ||
-				file.type === 'image/gif';
-			if (!isImage) {
-				alert('You can only upload image files (JPEG/PNG/GIF)');
-			}
-			return isImage || Upload.LIST_IGNORE;
-		},
-		showUploadList: false,
-		customRequest: (options: UploadRequestOption) => {
-			const { file, onSuccess } = options;
+	const onFinish = (values: ProfileI) => {
+		changeProfile(
+			values.first_name,
+			values.last_name,
+			values.photo,
+			values.phone
+		);
 
-			// Ensure `file` is of type `RcFile`
-			if (!(file instanceof File)) {
-				console.error('Uploaded file is not of the expected type.');
-				return;
-			}
-
-			// Simulate upload
-			setTimeout(() => {
-				setImageUrl(URL.createObjectURL(file));
-				if (onSuccess) {
-					onSuccess('ok'); // Notify Ant Design that the upload succeeded
-				}
-			}, 1000);
-		},
+		form.resetFields();
 	};
 
 	return (
@@ -43,21 +29,22 @@ export const ProfileForm: React.FC = () => {
 			<Form
 				layout="horizontal"
 				labelAlign="left"
-				onFinish={(values) => console.log('Form submitted:', values)}
+				form={form}
+				onFinish={onFinish}
 				className="bg-white p-4 rounded shadow w-full max-w-md"
 			>
 				<Form.Item
 					label={<span className="text-lg text-[#012970]">Profile Image</span>}
-					name="profileImage"
+					name="photo"
 					labelCol={{ span: 12 }}
 					wrapperCol={{ span: 20 }}
 				>
 					<div className="flex justify-center">
-						<Upload {...uploadProps}>
+						<Upload>
 							<div className="relative w-32 h-32 rounded-full overflow-hidden border border-gray-300 flex items-center justify-center">
 								<Avatar
 									size={128}
-									src={imageUrl}
+									src={'/profileTest.png'}
 									className="w-full h-full object-cover"
 								/>
 								<div className="absolute inset-0 bg-gray-700 bg-opacity-60 flex items-center justify-center text-white font-medium opacity-0 hover:opacity-100 transition-opacity">
@@ -70,7 +57,7 @@ export const ProfileForm: React.FC = () => {
 
 				<Form.Item
 					label={<span className="text-lg text-[#012970]">First Name</span>}
-					name="firstName"
+					name="first_name"
 					labelCol={{ span: 12 }}
 					wrapperCol={{ span: 20 }}
 					rules={[{ message: 'Please enter your first name' }]}
@@ -80,7 +67,7 @@ export const ProfileForm: React.FC = () => {
 
 				<Form.Item
 					label={<span className="text-lg text-[#012970]">Last Name</span>}
-					name="lastName"
+					name="last_name"
 					labelCol={{ span: 12 }}
 					wrapperCol={{ span: 20 }}
 					rules={[{ message: 'Please enter your last name' }]}

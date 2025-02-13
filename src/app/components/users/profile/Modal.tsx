@@ -1,6 +1,9 @@
 'use client';
 
+import { useStoreProfile } from '@/app/api/api';
 import { Modal, Form, Input, Button } from 'antd';
+import { useAtom } from 'jotai';
+import { joinStoresData } from '@/app/atoms/atoms';
 
 interface IEditAndAddressModal {
 	title: string;
@@ -10,6 +13,7 @@ interface IEditAndAddressModal {
 	firstValue: string;
 	secondValue: string;
 	thirdValue: string;
+	id: number;
 	open: boolean;
 	onClose: () => void;
 }
@@ -48,7 +52,9 @@ export const EditAndAddressModal = ({
 	thirdValue,
 	open,
 	onClose,
+	id,
 }: IEditAndAddressModal) => {
+	const { changeStore } = useStoreProfile();
 	const [form] = Form.useForm();
 
 	form.setFieldsValue({
@@ -62,6 +68,26 @@ export const EditAndAddressModal = ({
 			.validateFields()
 			.then((values) => {
 				console.log('Saved values:', values);
+
+				// Маппинг меток на ключи API
+				const fieldMapping = {
+					'Company Name': 'company_name',
+					'API Key': 'api_key',
+					'Seller ID': 'sellers_id',
+					Street: 'street',
+					City: 'city',
+					'Postal Code': 'postal_code',
+				};
+
+				// Преобразуем значения формы в объект с ключами для API
+				const updatedFields = Object.keys(values).reduce((acc, key) => {
+					const apiKey = fieldMapping[key];
+					if (apiKey) acc[apiKey] = values[key]; // Добавляем только заполненные поля
+					return acc;
+				}, {});
+
+				// Передаем id и обновленные поля в changeStore
+				changeStore(id, updatedFields);
 				onClose();
 			})
 			.catch((info) => {
@@ -133,6 +159,13 @@ export const ManagersModal = ({
 	storeName,
 	onClose,
 }: IManagersModalProps) => {
+	const [joinStores] = useAtom(joinStoresData);
+
+	const managers = joinStores.filter(
+		(request: { status: string; store: { company_name: string } }) =>
+			request.status === 'accepted' && request.store.company_name === storeName
+	);
+
 	return (
 		<Modal
 			title={`Managers of Store: ${storeName}?`}
@@ -141,7 +174,17 @@ export const ManagersModal = ({
 			footer={null}
 			onCancel={onClose}
 		>
-			<p>No managers assigned to this store.</p>
+			{managers.length > 0 ? (
+				<ul className="list-disc pl-4">
+					{managers.map((manager) => (
+						<li key={manager.id} className="text-[#012970] font-semibold">
+							{manager.user.username}
+						</li>
+					))}
+				</ul>
+			) : (
+				<p>No managers assigned to this store.</p>
+			)}
 		</Modal>
 	);
 };
@@ -150,19 +193,22 @@ export const NewStoreModal = ({
 	open,
 	onClose,
 }: INewAndJoinStoreModalProps) => {
+	const { createStore } = useStoreProfile();
 	const [form] = Form.useForm();
 
 	const handleOk = () => {
-		form
-			.validateFields()
-			.then((values) => {
-				console.log('Saved values:', values);
-				form.resetFields();
-				onClose();
-			})
-			.catch((info) => {
-				console.log('Validation failed:', info);
-			});
+		const values = form.getFieldsValue();
+		createStore(
+			values.companyName,
+			values.apiKey,
+			values.sellerId,
+			values.storeStreet,
+			values.storeCity,
+			values.storePostalCode
+		);
+		setTimeout(() => {
+			onClose();
+		}, 2000);
 	};
 
 	return (

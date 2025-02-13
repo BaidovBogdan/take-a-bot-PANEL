@@ -3,12 +3,20 @@
 import { Skeleton, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { createTabItems } from '../../components/users/profile/Tab';
+import { useChangeProfile, useStoreProfile } from '../../api/api';
+import { useAtom } from 'jotai';
+import { accessTokenAtom, myStoreData, myProfileData } from '@/app/atoms/atoms';
 
 export default function Profile() {
 	const [loadingPage, setLoadingPage] = useState(true);
 	const [loading, setLoading] = useState(false);
+	const { getProfile } = useChangeProfile();
+	const { getStore, getStoresJoin } = useStoreProfile();
 
 	useEffect(() => {
+		getProfile();
+		getStore();
+		getStoresJoin();
 		const timer = setTimeout(() => {
 			setLoadingPage(false);
 		}, 1000);

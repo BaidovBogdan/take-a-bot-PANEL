@@ -37,7 +37,6 @@ html,
 body {
 	width: 100%;
 }
-
 .ant-tabs-nav-wrap {
 	display: flex;
 	justify-content: center;
@@ -75,31 +74,6 @@ body {
 	}
 }
 
-/* Анимация для сайдбара */
-@keyframes sidebarSlideIn {
-	0% {
-		transform: translateX(-100%);
-	}
-	100% {
-		transform: translateX(0);
-	}
-}
-
-@keyframes sidebarSlideOut {
-	0% {
-		transform: translateX(0);
-	}
-	100% {
-		transform: translateX(-100%);
-	}
-}
-
-/* Классы анимации */
-.animate-sidebar {
-	animation: sidebarSlideIn 0.3s ease-in-out forwards;
-}
-
-/* Для меньших экранов, сайдбар поверх контента */
 @media (max-width: 1920px) {
 	.fixed {
 		position: fixed;
@@ -114,4 +88,39 @@ body {
 		left: 0;
 		top: 0;
 	}
+}
+
+.custom-menu .ant-menu-item,
+.custom-menu .ant-menu-submenu-title {
+	color: #012970 !important;
+	font-weight: 600; /* Делаем текст жирнее */
+}
+
+.custom-menu .ant-menu-item:hover,
+.custom-menu .ant-menu-submenu-title:hover {
+	color: #4154f1 !important;
+}
+
+/* My Stores и General — без жирности */
+.custom-menu .ant-menu-submenu-title {
+	font-weight: 500 !important;
+}
+
+/* Дочерние элементы (children) — жирные */
+.custom-menu .ant-menu-submenu .ant-menu-item {
+	font-weight: 600 !important; /* Делаем жирными */
+	font-size: 14px !important; /* Чуть меньше */
+}
+
+.test {
+	box-shadow: 1px 1px 1px 1px;
+}
+
+.rc-virtual-list-holder-inner {
+	will-change: transform;
+}
+.ant-btn-icon,
+.ant-btn-loading-icon {
+	display: flex;
+	align-items: center;
 }

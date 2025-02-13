@@ -5,7 +5,7 @@ import { Form, Input, Button, Checkbox, Skeleton, message } from 'antd';
 import { useRequestVerifyToken } from '../../api/api';
 import Image from 'next/image';
 import axios from 'axios';
-import { BASE_URL } from '../../api/api';
+import { USERS_URL } from '../../api/api';
 import { useRouter } from 'next/navigation';
 
 interface RegisterFormProps {
@@ -52,7 +52,7 @@ const RegisterForm = () => {
 	const handleRegister = async (values: RegisterFormProps) => {
 		setIsRegister(true);
 		try {
-			const response = await axios.post(`${BASE_URL}/auth/register`, {
+			const response = await axios.post(`${USERS_URL}/auth/register`, {
 				email: values.email,
 				password: values.password,
 				confirm_password: values.confirm,

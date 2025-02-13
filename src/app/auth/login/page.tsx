@@ -5,7 +5,7 @@ import qs from 'qs';
 import { Form, Input, Button, Checkbox, Skeleton, message } from 'antd';
 import Image from 'next/image';
 import axios from 'axios';
-import { BASE_URL } from '../../api/api';
+import { USERS_URL } from '../../api/api';
 import { accessTokenAtom } from '@/app/atoms/atoms';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
@@ -26,13 +26,12 @@ const LoginForm = () => {
 			setLoading(false);
 		}, 1000);
 	}, []);
-
 	const handleLogin = async (values: LoginFormProps) => {
 		console.log('Login values:', values.password + ' ' + values.username);
 		setIsLogin(true);
 		try {
 			const response = await axios.post(
-				`${BASE_URL}/auth/jwt/login`,
+				`${USERS_URL}/auth/jwt/login`,
 				qs.stringify({
 					username: values.username,
 					password: values.password,
