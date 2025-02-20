@@ -3,9 +3,8 @@
 import { Skeleton, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { createTabItems } from '../../components/users/profile/Tab';
-import { useChangeProfile, useStoreProfile } from '../../api/api';
-import { useAtom } from 'jotai';
-import { accessTokenAtom, myStoreData, myProfileData } from '@/app/atoms/atoms';
+import { useChangeProfile } from '@/app/api/useProfile';
+import { useStoreProfile } from '@/app/api/useStore';
 
 export default function Profile() {
 	const [loadingPage, setLoadingPage] = useState(true);

@@ -15,6 +15,7 @@ interface Company {
 }
 
 interface User {
+	first_name: string | boolean;
 	id: number;
 	email: string;
 	is_active: true;
@@ -111,7 +112,7 @@ export interface SalesData {
 	formatted_order_date: string;
 }
 
-export interface Dashboard {
+export interface DashboardI {
 	all_cost_prices: boolean;
 	average_sale_amount: string;
 	can_filter_label: string;
@@ -120,6 +121,7 @@ export interface Dashboard {
 	cancelations_total: number;
 	cancelations_total_fee_sum: string;
 	cancelations_units: number;
+	chart_filter_label: string;
 	cost_price_percentage: number;
 	danger_statuses: string[];
 	fee_percentage: number;
@@ -154,6 +156,21 @@ interface TopSale {
 	total_quantity: number;
 }
 
+export interface FilteredCheckBoxsSales {
+	rec_filter?: string;
+	start_date?: string;
+	end_date?: string;
+	cpt?: boolean;
+	jhb?: boolean;
+	returned?: boolean;
+	cancellations?: boolean;
+}
+
+export const filterStore = atomWithStorage<FilteredCheckBoxsSales>(
+	'filteredCheckBoxsSales',
+	{}
+);
+
 export const myStoreData = atomWithStorage<Company[] | ''>('my_store_data', []);
 export const myProfileData = atomWithStorage<User[] | ''>(
 	'my_profile_data',
@@ -178,7 +195,7 @@ export const filteredCheckBoxs = atomWithStorage<Record<string, boolean>>(
 	{}
 );
 
-export const DashboardData = atomWithStorage<Dashboard | ''>(
+export const DashboardData = atomWithStorage<DashboardI | ''>(
 	'dashboard_data',
 	''
 );
@@ -190,4 +207,23 @@ export const testAtom = atomWithStorage('test', {});
 export const accessTokenAtom = atomWithStorage<
 	string | null | undefined | any | ''
 >('access_token', null);
-export const burgerCheckAtom = atomWithStorage<boolean>('burger', true);
+export const burgerCheckAtom = atomWithStorage<number>('burger', 0);
+
+export const cardComponentSalesLabelAtom = atomWithStorage<string>(
+	'cardComponentSalesLabel',
+	''
+);
+
+export const cardComponentReturnedLabelAtom = atomWithStorage<string>(
+	'cardComponentReturnedLabel',
+	''
+);
+
+export const cardComponentCancellationsLabelAtom = atomWithStorage<string>(
+	'cardComponentCancellationsLabel',
+	''
+);
+export const cardComponentProfitLabelAtom = atomWithStorage<string>(
+	'cardComponentProfitLabel',
+	''
+);

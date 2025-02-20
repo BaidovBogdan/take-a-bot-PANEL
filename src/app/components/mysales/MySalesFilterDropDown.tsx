@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Checkbox, DatePicker, Button, Dropdown } from 'antd';
-import dayjs from 'dayjs';
-
+import dayjs, { Dayjs } from 'dayjs';
+import { ItemType } from 'antd/es/menu/interface';
 const { RangePicker } = DatePicker;
 
 type Filters = {
-	returned: boolean;
-	cancellations: boolean;
-	dateRange: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null;
-	dc: string[];
+	rec_filter?: string;
+	start_date?: string;
+	end_date?: string;
+	cpt?: boolean | undefined;
+	jhb?: boolean | undefined;
+	returned?: boolean | undefined;
+	cancellations?: boolean | undefined;
 };
 
 interface FilterMenuProps {
@@ -18,50 +21,116 @@ interface FilterMenuProps {
 export const FilterMenuMySales: React.FC<FilterMenuProps> = ({
 	onApplyFilters,
 }) => {
-	const [filters, setFilters] = useState<Filters>({
-		returned: false,
-		cancellations: false,
-		dateRange: null,
-		dc: ['CPT', 'JHB'],
-	});
+	const [filters, setFilters] = useState<Filters>({});
 
-	// Update the type of value to be more specific (boolean for single checkbox, string[] for Checkbox.Group)
+	const groupedItems = [
+		[
+			{ key: 'today', label: 'Today' },
+			{ key: 'this-week', label: 'This Week' },
+		],
+		[
+			{ key: 'this-month', label: 'This Month' },
+			{ key: 'this-year', label: 'This Year' },
+		],
+		[
+			{ key: 'last-7-days', label: 'Last 7 Days' },
+			{ key: 'last-90-days', label: 'Last 90 Days' },
+		],
+		[{ key: 'all', label: 'All' }],
+	];
+
 	const handleCheckboxChange = (
 		key: keyof Filters,
-		value: boolean | string[]
+		value: boolean | string
 	) => {
-		setFilters({ ...filters, [key]: value });
+		setFilters((prev) => {
+			const newFilters = { ...prev };
+
+			if (key === 'rec_filter') {
+				if (value) {
+					newFilters[key] = value as string;
+				} else {
+					delete newFilters[key];
+				}
+			} else {
+				if (value) {
+					//@ts-ignore
+					newFilters[key] = value as boolean | undefined | null;
+				} else {
+					delete newFilters[key];
+				}
+			}
+
+			return newFilters;
+		});
 	};
 
-	const handleDateChange = (
-		dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null
-	) => {
-		setFilters({ ...filters, dateRange: dates });
+	const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
+		setFilters((prev) => ({
+			...prev,
+			start_date: dates?.[0]?.toISOString(),
+			end_date: dates?.[1]?.toISOString(),
+		}));
 	};
 
 	const handleApplyFilters = () => {
-		onApplyFilters(filters);
+		const cleanedFilters = Object.entries(filters).reduce(
+			(acc, [key, value]) => {
+				if (value !== false && value !== null && value !== undefined) {
+					acc[key] = value;
+				}
+				return acc;
+			},
+			{} as Record<string, any>
+		);
+
+		onApplyFilters(cleanedFilters);
 	};
 
 	const preventDropdownClose = (e: React.MouseEvent) => {
 		e.stopPropagation();
 	};
 
-	const items = [
+	const items: ItemType[] = [
+		...groupedItems.map((group, groupIndex) => ({
+			key: `group-${groupIndex}`,
+			label: (
+				<div className="flex" onClick={preventDropdownClose}>
+					{group.map(({ key, label }) => (
+						<Checkbox
+							key={key}
+							checked={filters.rec_filter === key}
+							onChange={(e) =>
+								handleCheckboxChange('rec_filter', e.target.checked ? key : '')
+							}
+						>
+							{label}
+						</Checkbox>
+					))}
+				</div>
+			),
+		})),
+		{ type: 'divider' },
 		{
 			key: 'dc',
 			label: (
-				<div className="mb-2" onClick={preventDropdownClose}>
-					<Checkbox.Group
-						options={['CPT', 'JHB']}
-						value={filters.dc}
-						onChange={(checkedValues) =>
-							handleCheckboxChange('dc', checkedValues as string[])
-						}
-					/>
+				<div className="mb-2 flex flex-col" onClick={preventDropdownClose}>
+					<Checkbox
+						checked={filters.cpt}
+						onChange={(e) => handleCheckboxChange('cpt', e.target.checked)}
+					>
+						CPT
+					</Checkbox>
+					<Checkbox
+						checked={filters.jhb}
+						onChange={(e) => handleCheckboxChange('jhb', e.target.checked)}
+					>
+						JHB
+					</Checkbox>
 				</div>
 			),
 		},
+		{ type: 'divider' },
 		{
 			key: 'returned',
 			label: (
@@ -90,18 +159,23 @@ export const FilterMenuMySales: React.FC<FilterMenuProps> = ({
 				</div>
 			),
 		},
+		{ type: 'divider' },
 		{
 			key: 'dateRange',
 			label: (
 				<div className="mb-4" onClick={preventDropdownClose}>
 					<RangePicker
 						style={{ width: '100%' }}
-						value={filters.dateRange}
+						value={[
+							filters.start_date ? dayjs(filters.start_date) : null,
+							filters.end_date ? dayjs(filters.end_date) : null,
+						]}
 						onChange={handleDateChange}
 					/>
 				</div>
 			),
 		},
+		{ type: 'divider' },
 		{
 			key: 'apply',
 			label: (

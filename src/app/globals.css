@@ -6,16 +6,32 @@ body {
 	font-family: 'Nunito', sans-serif;
 	user-select: none;
 	-webkit-user-drag: none;
-	background-color: #f6f9ff;
 	overflow-x: hidden;
 }
 
+html,
+body,
+.ant-layout {
+	background-color: #f6f9ff !important;
+}
+
+.animated-column {
+	transition: width 0.3s ease !important;
+}
 .ant-btn,
 .ant-menu,
 .ant-menu-item,
 .ant-tabs-nav,
 .ant-tabs-tab-btn {
 	font-family: 'Nunito', sans-serif !important;
+}
+
+.loading:hover {
+	cursor: not-allowed !important;
+}
+
+.custom-btn:hover {
+	background-color: #274d8d !important;
 }
 
 h1,
@@ -123,4 +139,11 @@ body {
 .ant-btn-loading-icon {
 	display: flex;
 	align-items: center;
+}
+
+.custom-menu .ant-menu-item-disabled {
+	color: #919191 !important;
+}
+.custom-menu .ant-menu-item-disabled:hover {
+	color: #6e6e6e !important;
 }

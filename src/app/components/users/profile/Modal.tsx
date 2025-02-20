@@ -1,6 +1,6 @@
 'use client';
 
-import { useStoreProfile } from '@/app/api/api';
+import { useStoreProfile } from '@/app/api/useStore';
 import { Modal, Form, Input, Button } from 'antd';
 import { useAtom } from 'jotai';
 import { joinStoresData } from '@/app/atoms/atoms';
@@ -81,7 +81,8 @@ export const EditAndAddressModal = ({
 
 				// Преобразуем значения формы в объект с ключами для API
 				const updatedFields = Object.keys(values).reduce((acc, key) => {
-					const apiKey = fieldMapping[key];
+					//@ts-ignore
+					const apiKey = fieldMapping[key]; //@ts-ignore
 					if (apiKey) acc[apiKey] = values[key]; // Добавляем только заполненные поля
 					return acc;
 				}, {});
@@ -161,10 +162,13 @@ export const ManagersModal = ({
 }: IManagersModalProps) => {
 	const [joinStores] = useAtom(joinStoresData);
 
-	const managers = joinStores.filter(
-		(request: { status: string; store: { company_name: string } }) =>
-			request.status === 'accepted' && request.store.company_name === storeName
-	);
+	const managers = Array.isArray(joinStores)
+		? joinStores.filter(
+				(request: { status: string; store: { company_name: string } }) =>
+					request.status === 'accepted' &&
+					request.store.company_name === storeName
+		  )
+		: [];
 
 	return (
 		<Modal

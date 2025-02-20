@@ -8,9 +8,21 @@ import {
 	NewStoreModal,
 	JoinStoreModal,
 } from '../../../components/users/profile/Modal';
-import { useStoreProfile } from '@/app/api/api';
+import { useStoreProfile } from '@/app/api/useStore';
 import { useAtom } from 'jotai';
 import { myStoreData, joinStoresData } from '../../../atoms/atoms';
+
+interface JoinStoreRequest {
+	id: number;
+	status: string;
+	owner: boolean;
+	store: {
+		company_name: string;
+	};
+	user: {
+		username: string;
+	};
+}
 
 interface Store {
 	company_name: string;
@@ -63,7 +75,7 @@ export const CardStores = () => {
 			thirdLabel: type === 'address' ? 'Postal Code' : 'API Key',
 			firstValue: type === 'address' ? store.street || '' : store.company_name,
 			secondValue: type === 'address' ? store.city || '' : store.sellers_id,
-			thirdValue: type === 'address' ? store.postal_code || '' : store.api_key,
+			thirdValue: type === 'address' ? store.postal_code || '' : store.api_key, //@ts-ignore
 			id: store.id || null,
 		});
 		setIsEditAndAddressModalOpen(true);
@@ -86,7 +98,9 @@ export const CardStores = () => {
 	const handleDeleteStore = (id: number) => {
 		deleteStoreProfile(id)
 			.then(() => {
-				setStores((prev) => prev.filter((store) => store.id !== id));
+				setStores((prev) =>
+					Array.isArray(prev) ? prev.filter((store) => store.id !== id) : prev
+				);
 				handleCloseDeleteModal();
 			})
 			.catch((err) => {
@@ -106,6 +120,7 @@ export const CardStores = () => {
 	const joinStore = (values: { sellerId: string }) => {
 		joinStoreProfile(values.sellerId)
 			.then((newStore) => {
+				//@ts-ignore
 				setStores((prev) => [newStore, ...prev]);
 				setIsJoinStoreModalOpen(false);
 			})
@@ -114,77 +129,81 @@ export const CardStores = () => {
 
 	return (
 		<div className="space-y-4 bg-white rounded-lg p-4">
-			{joinStores
-				.filter(
-					(request: JoinStoreRequest) =>
-						request.status !== 'accepted' && request.status !== 'rejected'
-				)
-				.map((request: JoinStoreRequest) =>
-					!request.owner ? (
-						<div className="flex justify-center" key={request.id}>
-							<Card className="shadow-sm w-4/6 text-center relative">
-								<CloseOutlined
-									className="absolute top-2 right-2 text-xl text-red-600 cursor-pointer"
-									onClick={() => handleDeleteRequest(request.id)}
-								/>
-								<h3 className="text-base text-[#012970]">
-									Your join request to the store "{request.store.company_name}"
-									is pending approval from the store owner.
-								</h3>
-							</Card>
-						</div>
-					) : null
-				)}
-
-			{joinStores.filter(
-				(request: JoinStoreRequest) =>
-					request.owner &&
-					request.status !== 'accepted' &&
-					request.status !== 'rejected'
-			).length > 0 && (
-				<div className="space-y-4">
-					<h2 className="text-xl text-center font-semibold">
-						Pending Join Requests
-					</h2>
-					{joinStores
-						.filter(
-							(request: JoinStoreRequest) =>
-								request.owner &&
-								request.status !== 'accepted' &&
-								request.status !== 'rejected'
-						)
-						.map((request: JoinStoreRequest) => (
+			{Array.isArray(joinStores) &&
+				joinStores
+					.filter(
+						(request: JoinStoreRequest) =>
+							request.status !== 'accepted' && request.status !== 'rejected'
+					)
+					.map((request: JoinStoreRequest) =>
+						!request.owner ? (
 							<div className="flex justify-center" key={request.id}>
-								<Card className="shadow-sm w-4/6">
-									<div className="flex flex-col md:flex-row md:justify-between md:items-center">
-										<h3 className="text-lg text-[#012970] font-semibold">
-											{request.user.username} wants to join{' '}
-											{request.store.company_name}
-										</h3>
-										<div className="flex flex-col md:flex-row md:gap-2 mt-2 md:mt-0">
-											<Button
-												type="primary"
-												className="bg-green-500 w-full md:w-auto"
-												onClick={() => handleApproveRequest(request.id)}
-											>
-												Approve
-											</Button>
-											<Button
-												danger
-												className="w-full md:w-auto"
-												onClick={() => handleRejectRequest(request.id)}
-											>
-												Reject
-											</Button>
-										</div>
-									</div>
+								<Card className="shadow-sm w-4/6 text-center relative">
+									<CloseOutlined
+										className="absolute top-2 right-2 text-xl text-red-600 cursor-pointer"
+										onClick={() => handleDeleteRequest(request.id)}
+									/>
+									<h3 className="text-base text-[#012970]">
+										Your join request to the store "{request.store.company_name}
+										" is pending approval from the store owner.
+									</h3>
 								</Card>
 							</div>
-						))}
-				</div>
-			)}
+						) : null
+					)}
 
-			{Array.isArray(stores) && stores.length > 0 ? (
+			{Array.isArray(joinStores) &&
+				joinStores.filter(
+					(request: JoinStoreRequest) =>
+						request.owner &&
+						request.status !== 'accepted' &&
+						request.status !== 'rejected'
+				).length > 0 && (
+					<div className="space-y-4">
+						<h2 className="text-xl text-center font-semibold">
+							Pending Join Requests
+						</h2>
+						{joinStores
+							.filter(
+								(request: JoinStoreRequest) =>
+									request.owner &&
+									request.status !== 'accepted' &&
+									request.status !== 'rejected'
+							)
+							.map((request: JoinStoreRequest) => (
+								<div className="flex justify-center" key={request.id}>
+									<Card className="shadow-sm w-4/6">
+										<div className="flex flex-col md:flex-row md:justify-between md:items-center">
+											<h3 className="text-lg text-[#012970] font-semibold">
+												{request.user.username} wants to join{' '}
+												{request.store.company_name}
+											</h3>
+											<div className="flex flex-col md:flex-row md:gap-2 mt-2 md:mt-0">
+												<Button
+													type="primary"
+													className="bg-green-500 w-full md:w-auto"
+													onClick={() => handleApproveRequest(request.id)}
+												>
+													Approve
+												</Button>
+												<Button
+													danger
+													className="w-full md:w-auto"
+													onClick={() => handleRejectRequest(request.id)}
+												>
+													Reject
+												</Button>
+											</div>
+										</div>
+									</Card>
+								</div>
+							))}
+					</div>
+				)}
+
+			{Array.isArray(stores) &&
+			stores.length > 0 &&
+			stores.some((store) => store !== null) ? (
 				<>
 					<h2 className="text-xl text-center font-semibold">Your Stores</h2>
 					{[...stores].reverse().map((store) => {
@@ -243,8 +262,10 @@ export const CardStores = () => {
 						);
 					})}
 				</>
-			) : joinStores.filter((request: JoinStoreRequest) => request.owner)
-					.length === 0 && stores.length === 0 ? (
+			) : Array.isArray(joinStores) &&
+			  joinStores.filter((request: JoinStoreRequest) => request.owner)
+					.length === 0 &&
+			  stores.length === 0 ? (
 				<div className="text-center text-gray-600">
 					You don't have join requests and stores.
 				</div>
@@ -269,6 +290,7 @@ export const CardStores = () => {
 
 			{isEditAndAddressModalOpen && (
 				<EditAndAddressModal
+					id={0}
 					{...modalProps}
 					open={isEditAndAddressModalOpen}
 					onClose={handleCloseModal}

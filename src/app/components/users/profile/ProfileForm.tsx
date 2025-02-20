@@ -1,6 +1,6 @@
 import { Button, Form, Input, Avatar, Upload } from 'antd';
 
-import { useChangeProfile } from '../../../api/api';
+import { useChangeProfile } from '../../../api/useProfile';
 
 interface ProfileI {
 	first_name: string;

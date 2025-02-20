@@ -1,29 +1,84 @@
 'use client';
 
-import { Table, Tag, Pagination, Select, Dropdown, Input } from 'antd';
+import {
+	Table,
+	Tag,
+	Pagination,
+	Select,
+	Dropdown,
+	Input,
+	Skeleton,
+} from 'antd';
 import { ReactNode, useState } from 'react';
-import { menuItems } from './menuItems';
 
 interface SaleRecord {
+	formatted_order_date: string | number | Date;
+	selling_price: any;
+	net_profit: any;
+	sale_status: string;
+	product_title: string;
 	id: string | number;
-	date: string | Date;
-	product: string;
 	quantity: number;
-	status: string;
 	dc: string;
-	price: number;
-	profit: number;
 }
 
 interface RecentSalesProps {
 	data: SaleRecord[];
+	handleTableFilter: (filter: string) => void;
+	tableFilter: string;
+	label: string;
 }
 
-export const RecentSales = ({ data }: RecentSalesProps) => {
+type MenuItem =
+	| { key: string; label: string; type?: undefined; onClick?: () => void }
+	| { type: 'divider'; key?: undefined; label?: undefined };
+
+export const RecentSales = ({
+	data,
+	handleTableFilter,
+	tableFilter,
+	label,
+}: RecentSalesProps) => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [entriesPerPage, setEntriesPerPage] = useState<string | number>(10);
 	const [searchText, setSearchText] = useState<string>('');
 	const startIndex = (currentPage - 1) * Number(entriesPerPage);
+
+	const handleFilterClick = (filter: string) => {
+		handleTableFilter(filter);
+	};
+
+	const menuItems: MenuItem[] = [
+		{ key: 'today', label: 'Today', onClick: () => handleFilterClick('today') },
+		{
+			key: 'thisWeek',
+			label: 'This Week',
+			onClick: () => handleFilterClick('this-week'),
+		},
+		{
+			key: 'thisMonth',
+			label: 'This Month',
+			onClick: () => handleFilterClick('this-month'),
+		},
+		{
+			key: 'thisYear',
+			label: 'This Year',
+			onClick: () => handleFilterClick('this-year'),
+		},
+		{ type: 'divider' },
+		{
+			key: 'last7Days',
+			label: 'Last 7 Days',
+			onClick: () => handleFilterClick('last-7-days'),
+		},
+		{
+			key: 'last90Days',
+			label: 'Last 90 Days',
+			onClick: () => handleFilterClick('last-90-days'),
+		},
+		{ key: 'all', label: 'All', onClick: () => handleFilterClick('all') },
+		{ type: 'divider' },
+	];
 
 	// Filter data based on search
 	const filteredData = data.filter((record) =>
@@ -41,18 +96,19 @@ export const RecentSales = ({ data }: RecentSalesProps) => {
 	const columns = [
 		{
 			title: 'Date',
-			dataIndex: 'date',
-			key: 'date',
+			dataIndex: 'formatted_order_date',
+			key: 'formatted_order_date',
 			sorter: (a: SaleRecord, b: SaleRecord) =>
-				new Date(a.date).getTime() - new Date(b.date).getTime(),
+				new Date(a.formatted_order_date).getTime() -
+				new Date(b.formatted_order_date).getTime(),
 			render: (date: ReactNode) => <b>{date}</b>,
 		},
 		{
 			title: 'Product',
-			dataIndex: 'product',
-			key: 'product',
+			dataIndex: 'product_title',
+			key: 'product_title',
 			sorter: (a: SaleRecord, b: SaleRecord) =>
-				a.product.localeCompare(b.product),
+				(a.product_title || '').localeCompare(b.product_title || ''),
 			render: (product: string) => (
 				<span
 					className="hover:underline hover:cursor-pointer"
@@ -76,10 +132,10 @@ export const RecentSales = ({ data }: RecentSalesProps) => {
 		},
 		{
 			title: 'Status',
-			dataIndex: 'status',
-			key: 'status',
+			dataIndex: 'sale_status',
+			key: 'sale_status',
 			sorter: (a: SaleRecord, b: SaleRecord) =>
-				a.status.localeCompare(b.status),
+				(a.sale_status || '').localeCompare(b.sale_status || ''),
 			render: (status: string) => {
 				const color =
 					status === 'Shipped'
@@ -103,9 +159,10 @@ export const RecentSales = ({ data }: RecentSalesProps) => {
 		},
 		{
 			title: 'Price',
-			dataIndex: 'price',
-			key: 'price',
-			sorter: (a: SaleRecord, b: SaleRecord) => a.price - b.price,
+			dataIndex: 'selling_price',
+			key: 'selling_price',
+			sorter: (a: SaleRecord, b: SaleRecord) =>
+				a.selling_price - b.selling_price,
 			render: (price: number) => (
 				<Tag className="p-2 w-16 text-center text-base hover:bg-gray-500 hover:text-white">
 					{price}
@@ -114,9 +171,9 @@ export const RecentSales = ({ data }: RecentSalesProps) => {
 		},
 		{
 			title: 'Profit',
-			dataIndex: 'profit',
-			key: 'profit',
-			sorter: (a: SaleRecord, b: SaleRecord) => a.profit - b.profit,
+			dataIndex: 'net_profit',
+			key: 'net_profit',
+			sorter: (a: SaleRecord, b: SaleRecord) => a.net_profit - b.net_profit,
 		},
 	];
 
@@ -135,7 +192,12 @@ export const RecentSales = ({ data }: RecentSalesProps) => {
 		<div className="bg-white shadow-md rounded-lg p-4">
 			<div className="flex justify-between">
 				<span className="text-[#899bbd] text-sm">
-					<b className="text-xl text-[#012970] ">Recent Sales </b>| All
+					<b className="text-xl text-[#012970] ">Recent Sales </b>|{' '}
+					{label && label !== null ? (
+						label
+					) : (
+						<Skeleton.Input active size="small" />
+					)}
 				</span>
 				<Dropdown
 					menu={{ items: menuItems }}
@@ -159,7 +221,7 @@ export const RecentSales = ({ data }: RecentSalesProps) => {
 							{ value: '5', label: '5' },
 							{ value: '10', label: '10' },
 							{ value: '15', label: '15' },
-							{ value: 'all', label: 'All' },
+							{ value: '40', label: '40' },
 						]}
 					/>
 				</div>
@@ -173,10 +235,9 @@ export const RecentSales = ({ data }: RecentSalesProps) => {
 					Showing {paginatedData.length} of {filteredData.length} entries
 				</span>
 			</div>
-
 			<Table
-				className="overflow-x-auto md:overflow-x-hidden"
-				//@ts-expect-error Ant Design Table types mismatch with our custom data structure
+				className="overflow-x-auto 2xl:overflow-x-hidden"
+				//@ts-expect-error
 				columns={columns}
 				dataSource={paginatedData}
 				pagination={false}
@@ -185,7 +246,6 @@ export const RecentSales = ({ data }: RecentSalesProps) => {
 					index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
 				}
 			/>
-
 			{entriesPerPage !== 'all' && (
 				<div className="flex justify-end mt-4">
 					<Pagination

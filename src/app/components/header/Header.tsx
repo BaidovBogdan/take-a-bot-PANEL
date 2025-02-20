@@ -1,4 +1,3 @@
-import { AlignCenterOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { useAtom } from 'jotai';
 import {
@@ -7,26 +6,16 @@ import {
 	BookOutlined,
 	LogoutOutlined,
 } from '@ant-design/icons';
-import { burgerCheckAtom } from '../../atoms/atoms';
 import Image from 'next/image';
-import { Dropdown, Skeleton } from 'antd';
-import { useEffect, useState } from 'react';
+import { Divider, Dropdown } from 'antd';
 import { useLogout } from '../../api/api';
-import { accessTokenAtom, myProfileData } from '../../atoms/atoms';
+import { myProfileData } from '../../atoms/atoms';
+import { ItemType } from 'antd/es/menu/interface';
 
 export const Header = () => {
-	const [, setAccessTokenAtom] = useAtom(accessTokenAtom);
 	const [profileData] = useAtom(myProfileData);
 	const { logout } = useLogout();
-	const [, setBurgerCheckA] = useAtom(burgerCheckAtom);
 	const router = useRouter();
-
-	const [loading, setLoading] = useState(true);
-
-	useEffect(() => {
-		const timer = setTimeout(() => setLoading(false), 1000);
-		return () => clearTimeout(timer);
-	}, []);
 
 	const handleLogout = async () => {
 		await logout();
@@ -37,42 +26,27 @@ export const Header = () => {
 		router.push('/users/profile');
 	};
 
-	if (loading) {
-		return (
-			<header
-				className="flex justify-between p-4"
-				onContextMenu={(e) => e.preventDefault()}
-			>
-				<div className="flex gap-1 cursor-pointer">
-					<Skeleton.Avatar active size="large" className="w-8 h-8" />
-					<Skeleton.Input active size="small" className="w-32 h-8" />
-				</div>
-				<div className="flex gap-1 cursor-pointer">
-					<Skeleton.Avatar active size="large" className="w-12 h-12" />
-					<Skeleton.Input active size="small" className="w-24 h-8" />
-				</div>
-			</header>
-		);
-	}
-
 	const ProfileDropdown = () => {
-		const menuItems = [
+		const menuItems: ItemType[] = [
 			{
 				label: 'My Profile',
 				key: 'profile',
 				icon: <UserOutlined />,
 				onClick: handleProfile,
 			},
+			{ type: 'divider' as const },
 			{
 				label: 'Account Settings',
 				key: 'settings',
 				icon: <SettingOutlined />,
 			},
+			{ type: 'divider' },
 			{
 				label: 'Manual',
 				key: 'manual',
 				icon: <BookOutlined />,
 			},
+			{ type: 'divider' },
 			{
 				label: 'Logout',
 				key: 'logout',
@@ -100,9 +74,14 @@ export const Header = () => {
 						height={50}
 						priority
 					/>
-					<span className="flex items-center">
-						{profileData.first_name} <span className="ml-1 text-sm">▼</span>
-					</span>
+					<div className="flex items-center">
+						{Array.isArray(profileData) && profileData.length > 0 ? (
+							<span>{profileData[0].first_name}</span>
+						) : (
+							<span>No profile data available</span>
+						)}
+						<span className="ml-1 text-sm">▼</span>
+					</div>
 				</div>
 			</Dropdown>
 		);
@@ -110,14 +89,10 @@ export const Header = () => {
 
 	return (
 		<header
-			className="flex justify-between p-4 bg-white shadow-md"
+			className="flex justify-between p-4 bg-white shadow-2xl"
 			onContextMenu={(e) => e.preventDefault()}
 		>
-			<div className="flex gap-1 cursor-pointer">
-				<AlignCenterOutlined
-					className="text-2xl"
-					onClick={() => setBurgerCheckA((prev: boolean) => !prev)}
-				/>
+			<div className="flex gap-1 cursor-pointer ml-8 md:-ml-4">
 				<Image
 					src={'/takeabotLOGO.png'}
 					alt="Logo"

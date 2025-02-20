@@ -1,52 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, Skeleton } from 'antd';
+import { Layout, Menu, Button, Drawer } from 'antd';
 import {
 	DashboardOutlined,
 	ShoppingOutlined,
 	GiftOutlined,
-	UserOutlined,
 	AppstoreOutlined,
-	SolutionOutlined,
+	CheckCircleOutlined,
+	CloseCircleOutlined,
+	MenuUnfoldOutlined,
+	MenuFoldOutlined,
+	MenuOutlined,
 	SettingOutlined,
+	UserOutlined,
+	SolutionOutlined,
 	InsertRowRightOutlined,
 	QuestionOutlined,
 	CustomerServiceOutlined,
 	LogoutOutlined,
-	CheckCircleOutlined,
-	CloseCircleOutlined,
+	ArrowUpOutlined,
 } from '@ant-design/icons';
 import { useAtom } from 'jotai';
 import { myStoreData, selectedStore, myProfileData } from '../../atoms/atoms';
-import { useChangeProfile, useLogout } from '@/app/api/api';
 import { usePathname, useRouter } from 'next/navigation';
+import { useChangeProfile } from '@/app/api/useProfile';
+import { useLogout } from '@/app/api/api';
 
-interface SidebarProps {
-	className?: string;
-}
+const { Sider } = Layout;
 
-export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
-	const [loading, setLoading] = useState<boolean>(true);
+export const Sidebar: React.FC = () => {
+	const { logout } = useLogout();
+	const [collapsed, setCollapsed] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
 	const [stores] = useAtom(myStoreData);
-	const [openKeys, setOpenKeys] = useState<string[]>([]);
 	const [selectedStoreId, setSelectedStoreId] = useAtom(selectedStore);
 	const [profileData] = useAtom(myProfileData);
 	const { selectStore } = useChangeProfile();
 	const router = useRouter();
 	const pathname = usePathname();
-	const { logout } = useLogout();
+	const [, setScrollPosition] = useState(0);
+	const [showScrollButton, setShowScrollButton] = useState(false);
+	const [, setScrollPositionDeckstop] = useState(0);
+	const [showScrollButtonDeckstop, setShowScrollButtonDeckstop] =
+		useState(false);
 
-	const handleStoreClick = async (id: number) => {
-		await selectStore(id); // Меняем активный магазин через API
-		setSelectedStoreId(id); // Обновляем состояние в атоме
+	const toggleCollapsed = () => {
+		setCollapsed(!collapsed);
 	};
 
+	const handleStoreClick = async (id: number) => {
+		await selectStore(id);
+		setSelectedStoreId(id);
+	};
+
+	//@ts-ignore
 	useEffect(() => {
 		if (
-			profileData.active_store_id &&
+			//@ts-ignore
+			profileData.active_store_id && //@ts-ignore
 			profileData.active_store_id !== selectedStoreId
 		) {
+			//@ts-ignore
 			setSelectedStoreId(profileData.active_store_id || stores[0].id);
-		}
+		} //@ts-ignore
 	}, [profileData.active_store_id, selectedStoreId, setSelectedStoreId]);
 
 	const menuItems = [
@@ -81,18 +96,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
 			key: '/dashboard',
 			icon: <DashboardOutlined style={{ fontSize: 15 }} />,
 			onClick: () => router.push('/dashboard'),
+			disabled: stores.length === 0,
 		},
 		{
 			label: 'My Sales',
 			key: '/mysales',
 			icon: <ShoppingOutlined style={{ fontSize: 15 }} />,
 			onClick: () => router.push('/mysales'),
+			disabled: stores.length === 0,
 		},
 		{
 			label: 'My Offers',
 			key: '/myoffers',
 			icon: <GiftOutlined style={{ fontSize: 15 }} />,
 			onClick: () => router.push(`/myoffers/${selectedStoreId}`),
+			disabled: stores.length === 0,
 		},
 		{
 			label: 'General',
@@ -143,42 +161,115 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
 	];
 
 	useEffect(() => {
-		const timer = setTimeout(() => {
-			setLoading(false);
-		}, 1000);
+		const handleScroll = () => {
+			setScrollPosition(window.scrollY); // Update scroll position
+			if (window.scrollY > 50) {
+				setShowScrollButton(true); // Show button if scrolled down more than 50px
+			} else {
+				setShowScrollButton(false); // Hide button if at the top
+			}
+		};
 
-		return () => clearTimeout(timer);
+		window.addEventListener('scroll', handleScroll);
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
 	}, []);
 
-	const onOpenChange = (keys: string[]) => {
-		setOpenKeys(keys); // Update the state of open menu items
-		console.log(openKeys);
+	useEffect(() => {
+		const handleScroll = () => {
+			setScrollPositionDeckstop(window.scrollY); // Update scroll position
+			if (window.scrollY > 150) {
+				setShowScrollButtonDeckstop(true); // Show button if scrolled down more than 50px
+			} else {
+				setShowScrollButtonDeckstop(false); // Hide button if at the top
+			}
+		};
+
+		window.addEventListener('scroll', handleScroll);
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, []);
+
+	// Scroll to the top when the button is clicked
+	const scrollToTop = () => {
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth',
+		});
 	};
 
 	return (
-		<div
-			className={`text-blue-700 mt-16 3xl:mt-0 h-screen 3xl:h-[calc(100vh-100px)] rounded-md flex-shrink-0 ${
-				!loading ? 'bg-white shadow-md' : ''
-			}  ${className || ''} fixed 3xl:relative z-50`}
-		>
-			{loading ? (
-				<Skeleton avatar paragraph={{ rows: 6 }} active />
-			) : (
+		<>
+			<Button
+				className="absolute -mt-[49px] ml-1 z-50 md:hidden"
+				type="primary"
+				icon={<MenuOutlined />}
+				onClick={() => setIsOpen(true)}
+			/>
+			<Drawer
+				title="Menu"
+				placement="left"
+				closable={true}
+				onClose={() => setIsOpen(false)}
+				open={isOpen}
+				width={250}
+				className="md:hidden"
+			>
 				<Menu
+					theme="light"
+					defaultSelectedKeys={[pathname]}
 					mode="inline"
 					items={menuItems}
-					openKeys={openKeys} // Managed open keys state
-					onOpenChange={onOpenChange} // Handle open/close actions
-					selectedKeys={[pathname]}
-					className="text-[#012970]"
-					style={{
-						color: '#012970',
-					}}
+					onClick={() => setIsOpen(false)}
+				/>
+			</Drawer>
+
+			<Sider
+				collapsible
+				collapsed={collapsed}
+				onCollapse={toggleCollapsed}
+				className="hidden md:block"
+				theme="light"
+			>
+				<Button type="primary" onClick={toggleCollapsed} className="ml-4">
+					{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+				</Button>
+				<br />
+				<br />
+				<Menu
+					defaultSelectedKeys={[pathname]}
 					rootClassName="custom-menu"
-					onClick={(info) => console.log(info.key)}
-					forceSubMenuRender={true} // Forces the rendering of the submenus (helps with opening/closing)
+					mode="inline"
+					items={menuItems}
+				/>
+			</Sider>
+			{showScrollButton && (
+				<Button
+					className="fixed mt-2 ml-1 z-50 md:hidden"
+					type="primary"
+					icon={<ArrowUpOutlined />}
+					onClick={scrollToTop}
 				/>
 			)}
-		</div>
+			{showScrollButtonDeckstop && (
+				<Button
+					className="z-50 hidden md:flex"
+					type="primary"
+					icon={<ArrowUpOutlined />}
+					onClick={scrollToTop}
+					style={{
+						position: 'fixed',
+						bottom: '20px',
+						right: '20px',
+						borderRadius: '50%',
+						width: '40px',
+						height: '40px',
+						fontSize: '20px',
+					}}
+				/>
+			)}
+		</>
 	);
 };
