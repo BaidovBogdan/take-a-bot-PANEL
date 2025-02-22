@@ -49,21 +49,21 @@ export const Sidebar: React.FC = () => {
 	const [profileData] = useAtom(myProfileData);
 	const { selectStore } = useChangeProfile();
 	const router = useRouter();
-	const pathname = usePathname();
 	const [, setScrollPosition] = useState(0);
 	const [showScrollButton, setShowScrollButton] = useState(false);
 	const [, setScrollPositionDeckstop] = useState(0);
 	const [showScrollButtonDesktop, setShowScrollButtonDesktop] = useState(false);
 	const [isMobile, setIsMobile] = useState(false);
 
-	// Hook для проверки разрешения экрана
 	useEffect(() => {
+		if (typeof window === 'undefined') return;
+
 		const handleResize = () => {
-			setIsMobile(window.innerWidth < 768); // Порог для мобильных устройств (например, 768px)
+			setIsMobile(window.innerWidth < 768);
 		};
 
 		window.addEventListener('resize', handleResize);
-		handleResize(); // Проверяем сразу при монтировании компонента
+		handleResize();
 
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
@@ -76,6 +76,9 @@ export const Sidebar: React.FC = () => {
 		await selectStore(id);
 		setSelectedStoreId(id);
 	};
+
+	const defaultSelectedKey =
+		typeof window !== 'undefined' ? window.location.pathname : '';
 
 	//@ts-ignore
 	useEffect(() => {
@@ -203,26 +206,19 @@ export const Sidebar: React.FC = () => {
 
 	useEffect(() => {
 		const handleScroll = () => {
-			setScrollPositionDeckstop(window.scrollY); // Update scroll position
-			if (window.scrollY > 150) {
-				setShowScrollButtonDesktop(true); // Show button if scrolled down more than 50px
-			} else {
-				setShowScrollButtonDesktop(false); // Hide button if at the top
-			}
+			if (typeof window === 'undefined') return;
+			setScrollPosition(window.scrollY);
+			setShowScrollButton(window.scrollY > 50);
 		};
 
 		window.addEventListener('scroll', handleScroll);
-		return () => {
-			window.removeEventListener('scroll', handleScroll);
-		};
+		return () => window.removeEventListener('scroll', handleScroll);
 	}, []);
 
 	// Scroll to the top when the button is clicked
 	const scrollToTop = () => {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth',
-		});
+		if (typeof window === 'undefined') return;
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
 	return (
@@ -248,7 +244,7 @@ export const Sidebar: React.FC = () => {
 					>
 						<Menu
 							theme="light"
-							defaultSelectedKeys={[window.location.pathname]}
+							defaultSelectedKeys={[defaultSelectedKey]}
 							mode="inline"
 							items={menuItems}
 							onClick={() => setIsOpen(false)}
@@ -272,7 +268,7 @@ export const Sidebar: React.FC = () => {
 					<br />
 					<br />
 					<Menu
-						defaultSelectedKeys={[window.location.pathname]}
+						defaultSelectedKeys={[defaultSelectedKey]}
 						rootClassName="custom-menu"
 						mode="inline"
 						items={menuItems}

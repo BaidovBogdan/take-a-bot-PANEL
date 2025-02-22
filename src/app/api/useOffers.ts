@@ -16,7 +16,11 @@ interface editOffersI {
 export const useOffers = () => {
 	const { logout } = useLogout();
 	const [, setOffersData] = useAtom(myOffersData);
-	const token = JSON.parse(localStorage.getItem('access_token')!);
+	let token: string | null = null;
+
+	if (typeof window !== 'undefined') {
+		token = JSON.parse(localStorage.getItem('access_token')!);
+	}
 
 	/* prettier-ignore */
 	const filterMapping = {
