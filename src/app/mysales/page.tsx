@@ -49,7 +49,7 @@ export default function MySales() {
 
 	useEffect(() => {
 		setSalesData([]);
-		wsRef.current = new WebSocket('ws://34.141.20.236/api/v1/ws/sales');
+		wsRef.current = new WebSocket('ws://localhost:8000/api/v1/ws/sales');
 
 		wsRef.current.onopen = () => {
 			console.log('WebSocket соединение установлено');

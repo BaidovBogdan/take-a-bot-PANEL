@@ -128,7 +128,7 @@ export default function MyOffers() {
 
 	useEffect(() => {
 		setOffers([]);
-		wsRef.current = new WebSocket('ws://34.141.20.236/api/v1/ws/myoffers');
+		wsRef.current = new WebSocket('ws://localhost:8000/api/v1/ws/myoffers');
 
 		wsRef.current.onopen = () => {
 			console.log('WebSocket соединение установлено');
