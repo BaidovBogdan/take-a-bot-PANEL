@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Skeleton } from 'antd';
 import { CardStores } from './Card';
 import { ChangePassword } from './ChangePassword';

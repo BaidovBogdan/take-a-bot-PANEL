@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter } from 'next/navigation';
 import { useAtom } from 'jotai';
 import {
@@ -7,13 +9,18 @@ import {
 	LogoutOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
-import { Divider, Dropdown } from 'antd';
+import { Dropdown, Skeleton } from 'antd';
 import { useLogout } from '../../api/api';
 import { myProfileData } from '../../atoms/atoms';
 import { ItemType } from 'antd/es/menu/interface';
 
+interface profileData {
+	username: string;
+}
+
 export const Header = () => {
-	const [profileData] = useAtom(myProfileData);
+	//@ts-ignore
+	const [profileData] = useAtom<profileData>(myProfileData);
 	const { logout } = useLogout();
 	const router = useRouter();
 
@@ -75,11 +82,13 @@ export const Header = () => {
 						priority
 					/>
 					<div className="flex items-center">
-						{Array.isArray(profileData) && profileData.length > 0 ? (
-							<span>{profileData[0].first_name}</span>
-						) : (
-							<span>No profile data available</span>
-						)}
+						<span>
+							{profileData.username ? (
+								profileData.username
+							) : (
+								<Skeleton.Input active size="small" />
+							)}
+						</span>
 						<span className="ml-1 text-sm">▼</span>
 					</div>
 				</div>
@@ -89,7 +98,15 @@ export const Header = () => {
 
 	return (
 		<header
-			className="flex justify-between p-4 bg-white shadow-2xl"
+			style={{
+				position: 'sticky',
+				top: 0,
+				zIndex: 60,
+				width: '100%',
+				display: 'flex',
+				alignItems: 'center',
+			}}
+			className="flex justify-between p-4 bg-white shadow-lg"
 			onContextMenu={(e) => e.preventDefault()}
 		>
 			<div className="flex gap-1 cursor-pointer ml-8 md:-ml-4">

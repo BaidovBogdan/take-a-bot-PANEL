@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Card } from 'antd';
 import { CloseOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useState } from 'react';

@@ -6,7 +6,6 @@ import {
 	myProfileData,
 	myStoreData,
 	myOffersData,
-	burgerCheckAtom,
 	joinStoresData,
 	mySalesData,
 	DashboardData,
@@ -17,14 +16,14 @@ import { useRouter } from 'next/navigation';
 import { handleApiError } from './handleApiError';
 
 export const USERS_URL = 'http://35.232.222.207';
-export const api_URL = 'http://34.44.207.107';
+export const api_URL = 'http://34.141.20.236';
 
-export const useRequestVerifyToken = () => {
+export const useVerify = () => {
 	const { logout } = useLogout();
 	const requestVerifyToken = async (email: string) => {
 		try {
 			const response = await axios.post(
-				`${USERS_URL}/auth/request-verify-token`,
+				`${USERS_URL}/auth/request-verify-code`,
 				{ email }
 			);
 			if (response.status === 202) {
@@ -37,7 +36,22 @@ export const useRequestVerifyToken = () => {
 		}
 	};
 
-	return { requestVerifyToken };
+	const requestVerifyCode = async (code: number) => {
+		try {
+			const response = await axios.post(`${USERS_URL}/auth/verify`, {
+				code,
+			});
+			if (response.status === 200) {
+				message.success('Verification successful!');
+				return response.data;
+			}
+			throw new Error('Failed to verify code');
+		} catch (error) {
+			handleApiError(error, logout);
+		}
+	};
+
+	return { requestVerifyToken, requestVerifyCode };
 };
 
 export const useLogout = () => {
@@ -64,9 +78,17 @@ export const useLogout = () => {
 			setFilteredCheckboxs({});
 			setSelectedStore(0);
 
-			localStorage.clear();
+			if (typeof window !== 'undefined') {
+				localStorage.clear();
+			}
 		};
-		const token = JSON.parse(localStorage.getItem('access_token')!);
+
+		let token: string | null = null;
+
+		if (typeof window !== 'undefined') {
+			token = JSON.parse(localStorage.getItem('access_token')!);
+		}
+
 		try {
 			const response = await axios.post(
 				`${USERS_URL}/auth/jwt/logout`,
@@ -104,7 +126,7 @@ export const useForgotPassword = () => {
 			const response = await axios.post(`${USERS_URL}/auth/forgot-password`, {
 				email,
 			});
-			if (response.status === 202) {
+			if (response.status === 200) {
 				message.success('Password recovery instructions sent to your email.');
 				return response.data;
 			}
@@ -122,12 +144,12 @@ export const useResetPassword = () => {
 	const { logout } = useLogout();
 
 	const resetPassword = async (
-		token: string | undefined | null,
+		code: string | undefined | null,
 		password: string
 	) => {
 		try {
 			const response = await axios.post(`${USERS_URL}/auth/reset-password`, {
-				token,
+				code,
 				password,
 			});
 			if (response.status === 200) {

@@ -8,11 +8,15 @@ import { handleApiError } from './handleApiError';
 export const useChangeProfile = () => {
 	const [, setProfileData] = useAtom(myProfileData);
 	const { logout } = useLogout();
-	const token = JSON.parse(localStorage.getItem('access_token')!);
+	let token: string | null = null;
+
+	if (typeof window !== 'undefined') {
+		token = JSON.parse(localStorage.getItem('access_token')!);
+	}
 
 	const getProfile = async () => {
 		try {
-			const response = await axios.get(`${USERS_URL}/users/me`, {
+			const response = await axios.get(`${USERS_URL}/api/v1/jwt/users/me/`, {
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
@@ -32,8 +36,8 @@ export const useChangeProfile = () => {
 	const selectStore = async (id: number) => {
 		try {
 			const response = await axios.patch(
-				`${USERS_URL}/users/me`,
-				{ active_store_id: id },
+				`${USERS_URL}/api/v1/jwt/users/me/?active_store_id=${id}`,
+				{},
 				{
 					headers: {
 						Authorization: `Bearer ${token}`,
@@ -54,26 +58,35 @@ export const useChangeProfile = () => {
 	};
 
 	const changeProfile = async (
-		first_name: string,
-		last_name: string,
-		photo: string,
-		phone: string
+		first_name?: string,
+		last_name?: string,
+		photo?: File,
+		phone?: string,
+		active_store_id?: number
 	) => {
 		try {
+			const formData = new FormData();
+
+			if (photo) formData.append('photo', photo);
+
+			const params = new URLSearchParams();
+			if (first_name) params.append('first_name', first_name);
+			if (last_name) params.append('last_name', last_name);
+			if (phone) params.append('phone', phone);
+			if (active_store_id !== undefined)
+				params.append('active_store_id', active_store_id.toString());
+
 			const response = await axios.patch(
-				`${USERS_URL}/users/me`,
-				{
-					first_name,
-					last_name,
-					photo,
-					phone,
-				},
+				`${USERS_URL}/api/v1/jwt/users/me/?${params.toString()}`,
+				formData,
 				{
 					headers: {
 						Authorization: `Bearer ${token}`,
+						'Content-Type': 'multipart/form-data',
 					},
 				}
 			);
+
 			if (response.status === 200) {
 				message.success('Profile updated successfully.');
 				await getProfile();

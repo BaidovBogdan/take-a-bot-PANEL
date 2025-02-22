@@ -17,7 +17,11 @@ export default function MySales() {
 	const wsRef = useRef<WebSocket | null>(null);
 	const { updateSales } = useSales();
 	const [page, setPage] = useState(1);
-	const token = JSON.parse(localStorage.getItem('access_token')!);
+	let token: string | null = null;
+
+	if (typeof window !== 'undefined') {
+		token = JSON.parse(localStorage.getItem('access_token')!);
+	}
 	const [searchTerm, setSearchTerm] = useState('');
 	const [filterNew, setFilters] = useState<any | null | undefined>({});
 
@@ -45,7 +49,7 @@ export default function MySales() {
 
 	useEffect(() => {
 		setSalesData([]);
-		wsRef.current = new WebSocket('ws://34.44.207.107/api/v1/ws/sales');
+		wsRef.current = new WebSocket('ws://34.141.20.236/api/v1/ws/sales');
 
 		wsRef.current.onopen = () => {
 			console.log('WebSocket соединение установлено');

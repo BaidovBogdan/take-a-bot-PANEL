@@ -10,7 +10,11 @@ export const useStoreProfile = () => {
 	const { logout } = useLogout();
 	const [, setStoreData] = useAtom(myStoreData);
 	const [, setJoinStoresData] = useAtom(joinStoresData);
-	const token = JSON.parse(localStorage.getItem('access_token')!);
+	let token: string | null = null;
+
+	if (typeof window !== 'undefined') {
+		token = JSON.parse(localStorage.getItem('access_token')!);
+	}
 	const { getProfile } = useChangeProfile();
 	const getStore = async () => {
 		try {

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Checkbox, DatePicker, Button, Dropdown } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';

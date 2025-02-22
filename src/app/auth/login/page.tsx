@@ -6,7 +6,7 @@ import { Form, Input, Button, Checkbox, Skeleton, message } from 'antd';
 import Image from 'next/image';
 import axios from 'axios';
 import { USERS_URL } from '../../api/api';
-import { accessTokenAtom } from '@/app/atoms/atoms';
+import { accessTokenAtom, refreshTokenAtom } from '@/app/atoms/atoms';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 
@@ -18,6 +18,7 @@ interface LoginFormProps {
 const LoginForm = () => {
 	const [loading, setLoading] = useState(true);
 	const [, setAccessTokenAtom] = useAtom(accessTokenAtom);
+	const [, setRefreshTokenAtom] = useAtom(refreshTokenAtom);
 	const router = useRouter();
 	const [isLogin, setIsLogin] = useState(false);
 
@@ -31,13 +32,14 @@ const LoginForm = () => {
 		setIsLogin(true);
 		try {
 			const response = await axios.post(
-				`${USERS_URL}/auth/jwt/login`,
+				`${USERS_URL}/api/v1/jwt/login`,
 				qs.stringify({
 					username: values.username,
 					password: values.password,
 				})
 			);
 			setAccessTokenAtom(response.data.access_token);
+			setRefreshTokenAtom(response.data.refresh_token);
 			router.push('/users/profile');
 			console.log('Response:', response.data);
 			console.log('Access token has been set.');

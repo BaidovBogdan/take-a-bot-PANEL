@@ -7,7 +7,11 @@ import { message } from 'antd';
 
 export const useDashboard = () => {
 	const { logout } = useLogout();
-	const token = JSON.parse(localStorage.getItem('access_token')!);
+	let token: string | null = null;
+
+	if (typeof window !== 'undefined') {
+		token = JSON.parse(localStorage.getItem('access_token')!);
+	}
 	const [, setDashboardData] = useAtom(DashboardData);
 
 	const getMyDashboard = async (

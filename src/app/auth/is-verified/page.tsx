@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Checkbox, Skeleton } from 'antd';
+import { Form, Input, Button, Skeleton } from 'antd';
 import { SendOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-
 import { useRouter } from 'next/navigation';
+import { useVerify } from '@/app/api/api';
 
 const IsVerified = () => {
 	const [loading, setLoading] = useState(true);
+	const { requestVerifyCode } = useVerify();
 	const router = useRouter();
-	const [isLogin, setIsLogin] = useState(false);
+	const [code, setCode] = useState<string | number>('');
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -34,6 +35,11 @@ const IsVerified = () => {
 			</div>
 		);
 	}
+
+	const onFinish = () => {
+		requestVerifyCode(+code);
+		router.push('/auth/login');
+	};
 
 	return (
 		<div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -68,8 +74,10 @@ const IsVerified = () => {
 								placeholder="Enter your code from email"
 								autoComplete="code"
 								className="h-10"
+								value={code}
+								onChange={(e) => setCode(e.target.value)}
 							/>
-							<Button className="h-10">
+							<Button className="h-10" onClick={onFinish}>
 								<SendOutlined />
 							</Button>
 						</div>

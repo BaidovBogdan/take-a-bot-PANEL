@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Button, Drawer } from 'antd';
 import {
@@ -27,6 +29,17 @@ import { useLogout } from '@/app/api/api';
 
 const { Sider } = Layout;
 
+const siderStyle: React.CSSProperties = {
+	overflow: 'auto',
+	height: '100vh',
+	position: 'sticky',
+	insetInlineStart: 0,
+	top: 0,
+	bottom: 0,
+	scrollbarWidth: 'thin',
+	scrollbarGutter: 'stable',
+};
+
 export const Sidebar: React.FC = () => {
 	const { logout } = useLogout();
 	const [collapsed, setCollapsed] = useState(false);
@@ -40,8 +53,20 @@ export const Sidebar: React.FC = () => {
 	const [, setScrollPosition] = useState(0);
 	const [showScrollButton, setShowScrollButton] = useState(false);
 	const [, setScrollPositionDeckstop] = useState(0);
-	const [showScrollButtonDeckstop, setShowScrollButtonDeckstop] =
-		useState(false);
+	const [showScrollButtonDesktop, setShowScrollButtonDesktop] = useState(false);
+	const [isMobile, setIsMobile] = useState(false);
+
+	// Hook для проверки разрешения экрана
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth < 768); // Порог для мобильных устройств (например, 768px)
+		};
+
+		window.addEventListener('resize', handleResize);
+		handleResize(); // Проверяем сразу при монтировании компонента
+
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	const toggleCollapsed = () => {
 		setCollapsed(!collapsed);
@@ -180,9 +205,9 @@ export const Sidebar: React.FC = () => {
 		const handleScroll = () => {
 			setScrollPositionDeckstop(window.scrollY); // Update scroll position
 			if (window.scrollY > 150) {
-				setShowScrollButtonDeckstop(true); // Show button if scrolled down more than 50px
+				setShowScrollButtonDesktop(true); // Show button if scrolled down more than 50px
 			} else {
-				setShowScrollButtonDeckstop(false); // Hide button if at the top
+				setShowScrollButtonDesktop(false); // Hide button if at the top
 			}
 		};
 
@@ -202,58 +227,68 @@ export const Sidebar: React.FC = () => {
 
 	return (
 		<>
-			<Button
-				className="absolute -mt-[49px] ml-1 z-50 md:hidden"
-				type="primary"
-				icon={<MenuOutlined />}
-				onClick={() => setIsOpen(true)}
-			/>
-			<Drawer
-				title="Menu"
-				placement="left"
-				closable={true}
-				onClose={() => setIsOpen(false)}
-				open={isOpen}
-				width={250}
-				className="md:hidden"
-			>
-				<Menu
+			{/* Для мобильных устройств */}
+			{isMobile ? (
+				<>
+					<Button
+						className="absolute mt-5 ml-1 md:hidden"
+						type="primary"
+						icon={<MenuOutlined />}
+						onClick={() => setIsOpen(true)}
+						style={{ zIndex: 100 }}
+					/>
+					<Drawer
+						title="Menu"
+						placement="left"
+						closable={true}
+						onClose={() => setIsOpen(false)}
+						open={isOpen}
+						width={250}
+						className="md:hidden"
+					>
+						<Menu
+							theme="light"
+							defaultSelectedKeys={[window.location.pathname]}
+							mode="inline"
+							items={menuItems}
+							onClick={() => setIsOpen(false)}
+						/>
+					</Drawer>
+				</>
+			) : (
+				// Для десктопных устройств
+				<Sider
+					collapsible
+					style={siderStyle}
+					collapsed={collapsed}
+					onCollapse={toggleCollapsed}
+					className="hidden md:block"
 					theme="light"
-					defaultSelectedKeys={[pathname]}
-					mode="inline"
-					items={menuItems}
-					onClick={() => setIsOpen(false)}
-				/>
-			</Drawer>
+				>
+					<br />
+					<Button type="primary" onClick={toggleCollapsed} className="ml-3">
+						{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+					</Button>
+					<br />
+					<br />
+					<Menu
+						defaultSelectedKeys={[window.location.pathname]}
+						rootClassName="custom-menu"
+						mode="inline"
+						items={menuItems}
+					/>
+				</Sider>
+			)}
 
-			<Sider
-				collapsible
-				collapsed={collapsed}
-				onCollapse={toggleCollapsed}
-				className="hidden md:block"
-				theme="light"
-			>
-				<Button type="primary" onClick={toggleCollapsed} className="ml-4">
-					{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-				</Button>
-				<br />
-				<br />
-				<Menu
-					defaultSelectedKeys={[pathname]}
-					rootClassName="custom-menu"
-					mode="inline"
-					items={menuItems}
-				/>
-			</Sider>
 			{showScrollButton && (
 				<Button
-					className="fixed mt-2 ml-1 z-50 md:hidden"
+					className="fixed mt-5 ml-1 z-50 md:hidden"
 					type="primary"
 					icon={<ArrowUpOutlined />}
 					onClick={scrollToTop}
 				/>
 			)}
-			{showScrollButtonDeckstop && (
+			{showScrollButtonDesktop && (
 				<Button
 					className="z-50 hidden md:flex"
 					type="primary"

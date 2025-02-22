@@ -32,11 +32,11 @@ const ResetPasswordDone = () => {
 		);
 	}
 
-	const onFinish = async (values: { token: string; password: string }) => {
+	const onFinish = async (values: { code: string; password: string }) => {
 		setIsSubmitting(true);
-		const { token, password } = values;
+		const { code, password } = values;
 		try {
-			await resetPassword(token, password);
+			await resetPassword(code, password);
 		} catch (error: unknown) {
 			console.error('Error:', error);
 			message.error('An error occurred. Please try again.');
@@ -76,18 +76,20 @@ const ResetPasswordDone = () => {
 						TakeaBot
 					</a>
 				</p>
-				<div className="flex justify-center items-center pt-10 bg-gray-100">
+				<br />
+				<br />
+				<div className="flex justify-center items-center bg-gray-100">
 					<Form
 						onFinish={onFinish}
 						layout="vertical"
 						className="bg-white shadow-md rounded-lg p-6 w-full max-w-md"
 					>
 						<Form.Item
-							label={<span className="text-lg text-[#012970]">Token</span>}
-							name="token"
-							rules={[{ required: true, message: 'Please enter your token' }]}
+							label={<span className="text-lg text-[#012970]">Code</span>}
+							name="code"
+							rules={[{ required: true, message: 'Please enter your Code' }]}
 						>
-							<Input placeholder="Enter your token" className="rounded" />
+							<Input placeholder="Enter your Code" className="rounded" />
 						</Form.Item>
 
 						<Form.Item

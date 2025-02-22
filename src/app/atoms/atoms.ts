@@ -14,7 +14,7 @@ interface Company {
 	owner_id: number;
 }
 
-interface User {
+export interface User {
 	first_name: string | boolean;
 	id: number;
 	email: string;
@@ -64,11 +64,6 @@ export interface OffersData {
 interface Store {
 	id: number;
 	company_name: string;
-}
-
-interface User {
-	id: number;
-	username: string;
 }
 
 interface JoinStores {
@@ -145,6 +140,7 @@ export interface DashboardI {
 	total_fee: number;
 	total_pure_profit: number;
 	warning_statuses: string[];
+	chart_data: any[];
 }
 
 interface TopSale {
@@ -207,6 +203,9 @@ export const testAtom = atomWithStorage('test', {});
 export const accessTokenAtom = atomWithStorage<
 	string | null | undefined | any | ''
 >('access_token', null);
+export const refreshTokenAtom = atomWithStorage<
+	string | null | undefined | any | ''
+>('refresh_token', null);
 export const burgerCheckAtom = atomWithStorage<number>('burger', 0);
 
 export const cardComponentSalesLabelAtom = atomWithStorage<string>(

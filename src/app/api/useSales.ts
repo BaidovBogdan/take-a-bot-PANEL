@@ -8,7 +8,11 @@ import { useAtom } from 'jotai';
 export const useSales = () => {
 	const { logout } = useLogout();
 	const [salesData, setSalesData] = useAtom(mySalesData);
-	const token = JSON.parse(localStorage.getItem('access_token')!);
+	let token: string | null = null;
+
+	if (typeof window !== 'undefined') {
+		token = JSON.parse(localStorage.getItem('access_token')!);
+	}
 
 	const getMySales = async (page: number, append = false) => {
 		if (page === 1 && salesData.length > 0 && !append) return;

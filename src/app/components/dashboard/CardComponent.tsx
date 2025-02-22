@@ -2,8 +2,6 @@ import { Dropdown, Skeleton } from 'antd';
 import { RiseOutlined } from '@ant-design/icons';
 import { DashboardData } from '@/app/atoms/atoms';
 import { useAtom } from 'jotai';
-import { useState } from 'react';
-import { useDashboard } from '@/app/api/useDashboard';
 
 interface CardComponentProps {
 	title: string;

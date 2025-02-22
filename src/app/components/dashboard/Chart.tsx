@@ -50,11 +50,7 @@ export const ChartComponent = React.memo(
 			{ type: 'divider' },
 		];
 		const config = {
-			data: {
-				type: 'fetch',
-				value:
-					'https://gw.alipayobjects.com/os/bmw-prod/55424a73-7cb8-4f79-b60d-3ab627ac5698.json',
-			},
+			data: dashboard.chart_data,
 			xField: (d: { year: Date }) => new Date(d.year),
 			yField: 'value',
 			sizeField: 'value',

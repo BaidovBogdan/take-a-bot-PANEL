@@ -11,6 +11,7 @@ export const handleApiError = (error: unknown, logout: () => void) => {
 				error.response?.data?.message ||
 					error.response?.data?.detail?.[0]?.msg ||
 					error.response?.data?.detail ||
+					error.response?.data?.error ||
 					'An error occurred'
 			);
 		}
