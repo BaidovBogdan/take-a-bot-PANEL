@@ -15,8 +15,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { handleApiError } from './handleApiError';
 
-export const USERS_URL = 'http://35.232.222.207';
-export const api_URL = 'localhost:8000';
+export const USERS_URL = process.env.NEXT_PUBLIC_USERS_URL;
+export const api_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const useVerify = () => {
 	const { logout } = useLogout();

@@ -41,9 +41,11 @@ export default function MyOffers() {
 	const [activeSortKey, setActiveSortKey] = useState<string>('Sales - Revenue');
 	const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | 'none'>('asc');
 	let token: string | null = null;
+	let wsUrl: string | undefined = '';
 
 	if (typeof window !== 'undefined') {
 		token = JSON.parse(localStorage.getItem('access_token')!);
+		wsUrl = process.env.NEXT_PUBLIC_API_URL;
 	}
 	const [selectedStoreId] = useAtom(selectedStore);
 	const wsRef = useRef<WebSocket | null>(null);
@@ -127,8 +129,14 @@ export default function MyOffers() {
 	}, [activeSortKey, sortOrder]);
 
 	useEffect(() => {
+		if (typeof window === 'undefined') return;
+		if (wsRef.current) {
+			console.log('Закрываем старый WebSocket перед созданием нового');
+			wsRef.current.close();
+		}
+
 		setOffers([]);
-		wsRef.current = new WebSocket('ws://localhost:8000/api/v1/ws/myoffers');
+		wsRef.current = new WebSocket(`ws://${wsUrl}/api/v1/ws/myoffers`);
 
 		wsRef.current.onopen = () => {
 			console.log('WebSocket соединение установлено');

@@ -54,6 +54,11 @@ export const Sidebar: React.FC = () => {
 	const [, setScrollPositionDeckstop] = useState(0);
 	const [showScrollButtonDesktop, setShowScrollButtonDesktop] = useState(false);
 	const [isMobile, setIsMobile] = useState(false);
+	const [defaultSelectedKey, setDefaultSelectedKey] = useState('');
+
+	useEffect(() => {
+		setDefaultSelectedKey(window.location.pathname);
+	}, []);
 
 	useEffect(() => {
 		if (typeof window === 'undefined') return;
@@ -77,20 +82,14 @@ export const Sidebar: React.FC = () => {
 		setSelectedStoreId(id);
 	};
 
-	const defaultSelectedKey =
-		typeof window !== 'undefined' ? window.location.pathname : '';
-
 	//@ts-ignore
 	useEffect(() => {
-		if (
+		//@ts-ignore
+		if (!selectedStoreId && profileData?.active_store_id) {
 			//@ts-ignore
-			profileData.active_store_id && //@ts-ignore
-			profileData.active_store_id !== selectedStoreId
-		) {
-			//@ts-ignore
-			setSelectedStoreId(profileData.active_store_id || stores[0].id);
+			setSelectedStoreId(profileData.active_store_id);
 		} //@ts-ignore
-	}, [profileData.active_store_id, selectedStoreId, setSelectedStoreId]);
+	}, [profileData?.active_store_id, selectedStoreId]);
 
 	const menuItems = [
 		...(Array.isArray(stores) && stores.length > 0
@@ -268,7 +267,7 @@ export const Sidebar: React.FC = () => {
 					<br />
 					<br />
 					<Menu
-						defaultSelectedKeys={[defaultSelectedKey]}
+						defaultSelectedKeys={defaultSelectedKey ? [defaultSelectedKey] : []}
 						rootClassName="custom-menu"
 						mode="inline"
 						items={menuItems}

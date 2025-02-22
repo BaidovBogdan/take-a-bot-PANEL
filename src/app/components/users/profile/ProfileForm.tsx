@@ -74,6 +74,7 @@ export const ProfileForm: React.FC = () => {
 									size={128}
 									src={imageUrl}
 									className="w-full h-full object-cover"
+									alt='profile'
 								/>
 								<div className="absolute inset-0 bg-gray-700 bg-opacity-60 flex items-center justify-center text-white font-medium opacity-0 hover:opacity-100 transition-opacity">
 									Click to Change
